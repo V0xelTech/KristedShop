@@ -34,6 +34,7 @@ shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/main.
 
 print("Downloading config...")
 if fs.exists("config.lua") then
+    shell.run("rm configpre.lua")
     shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/config.lua configpre.lua")
     print("Updating config...")
     local oc = require("config")
@@ -45,7 +46,7 @@ if fs.exists("config.lua") then
     end
     oc.Version = nc.Version
     local ncc = fs.open("config.lua", "w")
-    ncc.write("return "..textutils.serialise(nc))
+    ncc.write("return "..textutils.serialise(oc))
     ncc.close()
 else
     shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/config.lua config.lua")
