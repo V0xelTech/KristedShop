@@ -20,10 +20,6 @@ local dw = require("discordWebhook")
 local config = require("config")
 local url = "https://krist.dev"
 
-local htr = fs.open("handled_transactions.txt", "r")
-local handled_transactions = textutils.unserialise(htr.readAll())
-htr.close()
-
 function includes(table, string)
     for k,v in pairs(table) do
         if v == string then
