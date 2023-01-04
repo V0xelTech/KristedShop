@@ -196,6 +196,31 @@ function updater()
     end
 end
 
+function restarter()
+    local ev = os.pullEventRaw()
+    if ev == "terminate" then
+        print("Automatic restart sechuled!")
+        local monitor = peripheral.find("monitor")
+        local w,h = monitor.getSize()
+        for i=10,1,-1 do
+            monitor.setTextColor(0x4000)
+            monitor.setCursorPos(w-#("Automatic restart"),1)
+            monitor.clearLine()
+            monitor.write("Automatic restart")
+            monitor.setCursorPos(w-#("in "..i.." seconds"),2)
+            monitor.clearLine()
+            monitor.write("in "..i.." seconds")
+            os.sleep(1)
+        end
+        monitor.setTextColor(0x4000)
+        monitor.setCursorPos(w-#("Automatic restart"),1)
+        monitor.write("Automatic restart")
+        monitor.setCursorPos(w-#("now"),2)
+        monitor.write("now")
+        shell.run("reboot")
+    end
+end
+
 function frontend()
     local monitor = peripheral.find("monitor")
     y = 1
@@ -244,4 +269,4 @@ function frontend()
     end
 end
 
-parallel.waitForAny(backend, frontend, redstoneos, updater)
+parallel.waitForAny(backend, frontend, redstoneos, updater, restarter)
