@@ -173,8 +173,10 @@ function updater()
             end
             monitor.setTextColor(0x4000)
             monitor.setCursorPos(w-#("Automatic update"),1)
+            monitor.clearLine()
             monitor.write("Automatic update")
             monitor.setCursorPos(w-#("now"),2)
+            monitor.clearLine()
             monitor.write("now")
 
             local fi = fs.open("startup.lua","w")
