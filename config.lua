@@ -20,6 +20,5 @@ return {
       ["Price"]=1 --The price / item
     },
   },
-  ["apple"]="sad",
   ["Version"]="1.1" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
 }
