@@ -19,5 +19,6 @@ return {
       ["Id"]="minecraft:wheat", --The name of the item
       ["Price"]=1 --The price / item
     },
-  }
+  },
+  ["Version"]="1.0" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
 }
