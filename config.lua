@@ -20,6 +20,6 @@ return {
       ["Price"]=1 --The price / item
     },
   },
-  ["Enable-Automatic-Update"]=true --Enable automatic updates
+  ["Enable-Automatic-Update"]=true, --Enable automatic updates
   ["Version"]="1.1" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
 }
