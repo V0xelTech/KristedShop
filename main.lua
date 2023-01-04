@@ -118,7 +118,7 @@ function backend()
                                         kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
                                     end
                                     if config["Discord-Webhook"] then
-                                        dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff, 
+                                        dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
                                         {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=count},{["name"]="Exchange",["value"]=exchange},{["name"]="Change",["value"]=change}})
                                     end
                                 else
@@ -164,8 +164,10 @@ function updater()
             for i=10,1,-1 do
                 monitor.setTextColor(0x4000)
                 monitor.setCursorPos(w-#("Automatic update"),1)
+                monitor.clearLine()
                 monitor.write("Automatic update")
                 monitor.setCursorPos(w-#("in "..i.." seconds"),2)
+                monitor.clearLine()
                 monitor.write("in "..i.." seconds")
                 os.sleep(1)
             end
@@ -174,13 +176,15 @@ function updater()
             monitor.write("Automatic update")
             monitor.setCursorPos(w-#("now"),2)
             monitor.write("now")
-            
-            monitor.setBackgroundColor(0x100)
-            monitor.setTextColor(0x4000)
-            monitor.clear()
-            monitor.setCursorPos(1,1)
-            monitor.write("The shop is currently updating...")
+
             local fi = fs.open("startup.lua","w")
+            fi.write('local monitor = peripheral.find("monitor")\n')
+            fi.write('monitor.setBackgroundColor(0x100)\n')
+            fi.write('monitor.setTextColor(0x4000)\n')
+            fi.write('monitor.clear()\n')
+            fi.write('monitor.setCursorPos(1,1)\n')
+            fi.write('monitor.write("The shop is currently updating...")\n')
+
             fi.write('os.sleep(10)\n')
             fi.write('shell.run("rm installer.lua")\n')
             fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua")\n')
