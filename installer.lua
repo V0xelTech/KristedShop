@@ -13,7 +13,9 @@ print(text)
 print("Installer")
 print("By. Bagi_Adam")
 
-print("Installing version: "..http.get("https://raw.githubusercontent.com/afonya2/KristedShop/main/version.txt").readAll())
+local branch = "main"
+
+print("Installing version: "..http.get("https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/version.txt").readAll())
 
 print("Checking for old versions...")
 if fs.exists("config.lua") then
@@ -22,20 +24,20 @@ end
 
 print("Downloading apis...")
 shell.run("rm kristapi.lua")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/kristapi.lua kristapi.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/kristapi.lua kristapi.lua")
 shell.run("rm json.lua")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/json.lua json.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/json.lua json.lua")
 shell.run("rm discordWebhook.lua")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/discordWebhook.lua discordWebhook.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/discordWebhook.lua discordWebhook.lua")
 
 print("Downloading main system...")
 shell.run("rm main.lua")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/main.lua main.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/main.lua main.lua")
 
 print("Downloading config...")
 if fs.exists("config.lua") then
     shell.run("rm configpre.lua")
-    shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/config.lua configpre.lua")
+    shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/config.lua configpre.lua")
     print("Updating config...")
     local oc = require("config")
     local nc = require("configpre")
@@ -49,7 +51,7 @@ if fs.exists("config.lua") then
     ncc.write("return "..textutils.serialise(oc))
     ncc.close()
 else
-    shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/config.lua config.lua")
+    shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/config.lua config.lua")
 end
 print("Generating startup...")
 local fi = fs.open("startup.lua","w")
