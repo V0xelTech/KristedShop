@@ -8,6 +8,7 @@ local text = [[
 
 ]]
 print(text)
+print("noicae")
 print("By. Bagi_Adam")
 
 if _G.KristedSocket ~= nil then

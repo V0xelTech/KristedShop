@@ -43,6 +43,7 @@ if fs.exists("config.lua") then
             oc[k] = v
         end
     end
+    oc.Version = nc.Version
     local ncc = fs.open("config.lua", "w")
     ncc.write("return "..textutils.serialise(nc))
     ncc.close()
