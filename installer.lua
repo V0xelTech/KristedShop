@@ -39,7 +39,7 @@ if fs.exists("config.lua") then
     print("Updating config...")
     local oc = require("config")
     local nc = require("configpre")
-    for k,v in ipairs(nc) do
+    for k,v in pairs(nc) do
         if oc[k] == nil then
             oc[k] = v
         end
