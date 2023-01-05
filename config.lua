@@ -21,5 +21,5 @@ return {
     },
   },
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="1.1.3" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
+  ["Version"]="1.1.4" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
 }
