@@ -232,6 +232,11 @@ function frontend()
             end
         end
     end
+
+    while true do
+        render()
+        os.sleep(5)
+    end
 end
 
 return frontend
