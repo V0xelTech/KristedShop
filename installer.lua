@@ -1,4 +1,4 @@
-local args = {...}
+local args = {...}a
 
 local text = [[
      _  __     _     _           _
