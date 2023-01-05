@@ -5,7 +5,8 @@
 2. run the `installer.lua`
 3. wait for it
 4. edit the config.lua
-5. reboot the turtle
+5. make a copy of the config if something goes wrong you can load it back `cp config.lua conf.lua`
+6. reboot the turtle
 
 ## How does the config works?
 Go to the config.lua and everything commented
