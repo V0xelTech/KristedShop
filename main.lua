@@ -179,7 +179,7 @@ function updater()
                 monitor.setCursorPos(w-#("now"),2)
                 monitor.clearLine()
                 monitor.write("now")
-    
+
                 local fi = fs.open("startup.lua","w")
                 fi.write('local monitor = peripheral.find("monitor")\n')
                 fi.write('monitor.setBackgroundColor(0x100)\n')
@@ -187,7 +187,7 @@ function updater()
                 fi.write('monitor.clear()\n')
                 fi.write('monitor.setCursorPos(1,1)\n')
                 fi.write('monitor.write("The shop is currently updating...")\n')
-    
+
                 fi.write('os.sleep(10)\n')
                 fi.write('shell.run("rm installer.lua")\n')
                 fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua")\n')
@@ -217,29 +217,40 @@ function frontend()
         mprint(config["Shop-Name"].."\n")
         mprint(config["Description"])
         mprint("Shop owned by: "..config["Owner"].."\n")
-        mprint("Running: Kristed\n")
+        --mprint("Running: Kristed\n")
         mprint("By: Bagi_Adam")
 
+        mprint("")
         local kukucska = {}
+        local w,h = monitor.getSize()
+        monitor.setCursorPos(1,y)
+        y = y + 1
+        monitor.write("Stock Name")
+        monitor.setCursorPos(w-#("price")+1,y-1)
+        monitor.write("price")
         function addItem(id, name, price)
-            mprint(stockLookup(id).."  "..name)
-            local w,h = monitor.getSize()
-            monitor.setCursorPos(w-#(price.."kst"),y-1)
+            monitor.setCursorPos(1,y)
+            y = y + 1
+            monitor.write(stockLookup(id).."")
+            monitor.setCursorPos(#("Stock")+2,y-1)
+            monitor.write(name)
+            monitor.setCursorPos(w-#(price.."kst")+1,y-1)
             monitor.write(price.."kst")
             table.insert(kukucska, {line=y-1,id=id,name=name,price=price,stock=stockLookup(id)})
         end
-        mprint("")
-        addItem("Stock", "Name", "")
+        --mprint("")
+        --addItem("Stock", "Name", "")
         --addItem("Test", 10, 10)
         for k,v in ipairs(config.Items) do
             addItem(v.Id, v.Name, v.Price)
         end
 
-        local w,h = monitor.getSize()
         monitor.setCursorPos(1,h-1)
         monitor.write("To buy something: /pay "..config["Wallet-id"].." <price> itemname=<itemname>")
         monitor.setCursorPos(1,h)
         monitor.write("For example: /pay "..config["Wallet-id"].." 10 itemname="..config.Items[1].Name)
+        monitor.setCursorPos(w-#("Kristed v"..config.Version)+1,h)
+        monitor.write("Kristed v"..config.Version)
         return kukucska
     end
     local kuka = rerender()
@@ -247,11 +258,13 @@ function frontend()
         --rerender()
         for k,v in ipairs(kuka) do
             if stockLookup(v.id) ~= v.stock then
+                local w,h = monitor.getSize()
                 monitor.setCursorPos(1,v.line)
                 monitor.clearLine()
-                monitor.write(stockLookup(v.id).."  "..v.name)
-                local w,h = monitor.getSize()
-                monitor.setCursorPos(w-#(v.price.."kst"),v.line)
+                monitor.write(stockLookup(v.id).."")
+                monitor.setCursorPos(#("Stock")+2,v.line)
+                monitor.write(v.name)
+                monitor.setCursorPos(w-#(v.price.."kst")+1,v.line)
                 monitor.write(v.price.."kst")
                 kuka[k].stock = stockLookup(v.id)
             end
