@@ -65,13 +65,9 @@ function preDropItem(id, count)
     for k,v in ipairs(stacks) do
         while v > 0 do
             local dro = dropItem(id, v)
-            if dro == nil then
-                return false
-            end
             v = v - dro
         end
     end
-    return true
 end
 
 function dropItem(id, limit)
@@ -112,27 +108,21 @@ function backend()
                                 if stockLookup(vav.Id) > 0 then
                                     local count = math.floor(trans.value / vav.Price)
                                     local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
-                                    local pdi = preDropItem(vav.Id, count)
-                                    if pdi == true then
-                                        if exchange >= 0 then
-                                            if exchange ~= 0 then
-                                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
-                                            end
-                                        end
-                                        local change = ((trans.value / vav.Price)-count)*vav.Price
-                                        if change >= 1 then
-                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
-                                        end
-                                        if config["Discord-Webhook"] then
-                                            dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
-                                            {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=count},{["name"]="Exchange",["value"]=exchange},{["name"]="Change",["value"]=change}})
+                                    if exchange >= 0 then
+                                        preDropItem(vav.Id, stockLookup(vav.Id))
+                                        if exchange ~= 0 then
+                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
                                         end
                                     else
-                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=I cant drop the item, please report this to the shop owner!")
-                                        if config["Discord-Webhook"] then
-                                            dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something, but failed to drop item", 15844367,
-                                            {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]="Failed"}})
-                                        end
+                                        preDropItem(vav.Id, count)
+                                    end
+                                    local change = ((trans.value / vav.Price)-count)*vav.Price
+                                    if change >= 1 then
+                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
+                                    end
+                                    if config["Discord-Webhook"] then
+                                        dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
+                                        {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=count},{["name"]="Exchange",["value"]=exchange},{["name"]="Change",["value"]=change}})
                                     end
                                 else
                                     kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
