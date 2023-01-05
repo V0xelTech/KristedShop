@@ -248,7 +248,7 @@ function frontend()
         monitor.setCursorPos(1,h-1)
         monitor.write("To buy something: /pay "..config["Wallet-id"].." <price> itemname=<itemname>")
         monitor.setCursorPos(1,h)
-        monitor.write("For example: /pay "..config["Wallet-id"].." 10 itemname="..config.Items[1].Name)
+        monitor.write("For example: /pay "..config["Wallet-id"].." "..config.Items[1].Price.." itemname="..config.Items[1].Name)
         monitor.setCursorPos(w-#("Kristed v"..config.Version)+1,h)
         monitor.write("Kristed v"..config.Version)
         return kukucska
