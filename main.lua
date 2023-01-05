@@ -8,7 +8,7 @@ local text = [[
 
 ]]
 print(text)
-print("By. Bagi_Adam")
+print("By. VectorTech team (Bagi_Adam, BomberPlayz_)")
 
 if _G.KristedSocket ~= nil then
     _G.KristedSocket.close()
@@ -40,111 +40,7 @@ function mysplit (inputstr, sep)
     return t
 end
 
-function stockLookup(id)
-    local chest = peripheral.wrap(config["Chest-Id"])
-    local count = 0
-    for k,v in pairs(chest.list()) do
-        if v.name == id then
-            count = count + v.count
-        end
-    end
-    return count
-end
 
-function preDropItem(id, count)
-    local stacks = {}
-    local ca = count/64
-    local marad = count
-    for i=1,math.floor(ca),1 do
-        table.insert(stacks, 64)
-        marad = marad - 64
-    end
-    if ca ~= math.floor(ca) then
-        table.insert(stacks, marad)
-    end
-    for k,v in ipairs(stacks) do
-        while v > 0 do
-            local dro = dropItem(id, v)
-            v = v - dro
-        end
-    end
-end
-
-function dropItem(id, limit)
-    local chest = peripheral.wrap(config["Chest-Id"])
-    for k,v in pairs(chest.list()) do
-        if v.name == id then
-            local co = chest.pushItems(config["Self-Id"],k,limit,1)
-            turtle.drop(limit)
-            return co
-        end
-    end
-end
-
-function backend()
-    local socket = kristapi.websocket()
-    _G.KristedSocket = socket
-    socket.send('{"type":"subscribe","event":"transactions","id":1}')
-    while true do
-        local dta = socket.receive()
-        --dta = json.decode(dta)
-        dta = textutils.unserialiseJSON(dta)
-        if dta.type == "event" and dta.event == "transaction" then
-            local trans = dta.transaction
-            if trans.to == config["Wallet-id"] then
-                if trans.metadata ~= nil then
-                    local meta = kristapi.parseMeta(trans.metadata)
-                    if meta["return"] ~= nil then
-                        print(trans.from, trans.to, trans.value, meta["return"])
-                        if meta.itemname ~= nil and meta.itemname ~= "" then
-                            local tc = false
-                            local vav = nil
-                            for k,v in ipairs(config.Items) do
-                                if v.Name == meta.itemname then
-                                    tc = true
-                                    vav = v
-                                end
-                            end
-                            if tc then
-                                if stockLookup(vav.Id) > 0 then
-                                    local count = math.floor(trans.value / vav.Price)
-                                    local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
-                                    if exchange >= 0 then
-                                        preDropItem(vav.Id, stockLookup(vav.Id))
-                                        if exchange ~= 0 then
-                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
-                                        end
-                                    else
-                                        preDropItem(vav.Id, count)
-                                    end
-                                    local change = ((trans.value / vav.Price)-count)*vav.Price
-                                    if change >= 1 then
-                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
-                                    end
-                                    if config["Discord-Webhook"] then
-                                        dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
-                                        {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=count},{["name"]="Exchange",["value"]=exchange},{["name"]="Change",["value"]=change}})
-                                    end
-                                else
-                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
-                                end
-                            else
-                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We can't give you: "..meta.itemname)
-                            end
-                        else
-                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=Please specify an itemname")
-                        end
-                    else
-                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Please send the krist from switchcraft, or specify return name")
-                    end
-                else
-                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Got no meta!")
-                end
-            end
-        end
-        os.sleep(0)
-    end
-end
 
 function redstoneos()
     local reds = false
@@ -159,122 +55,11 @@ function redstoneos()
     end
 end
 
-function updater()
-    if config["Enable-Automatic-Update"] then
-        while true do
-            local nver = http.get("https://raw.githubusercontent.com/afonya2/KristedShop/main/version.txt").readAll()
-            if config.Version ~= nver then
-                local monitor = peripheral.find("monitor")
-                local w,h = monitor.getSize()
-                for i=10,1,-1 do
-                    monitor.setTextColor(0x4000)
-                    monitor.setCursorPos(w-#("Automatic update"),1)
-                    monitor.clearLine()
-                    monitor.write("Automatic update")
-                    monitor.setCursorPos(w-#("in "..i.." seconds"),2)
-                    monitor.clearLine()
-                    monitor.write("in "..i.." seconds")
-                    os.sleep(1)
-                end
-                monitor.setTextColor(0x4000)
-                monitor.setCursorPos(w-#("Automatic update"),1)
-                monitor.clearLine()
-                monitor.write("Automatic update")
-                monitor.setCursorPos(w-#("now"),2)
-                monitor.clearLine()
-                monitor.write("now")
+_G.kristedData = {
+    dw = dw,
+    config = config,
+    kristapi = kristapi
+}
 
-                local fi = fs.open("startup.lua","w")
-                fi.write('local monitor = peripheral.find("monitor")\n')
-                fi.write('monitor.setBackgroundColor(0x100)\n')
-                fi.write('monitor.setTextColor(0x4000)\n')
-                fi.write('monitor.clear()\n')
-                fi.write('monitor.setCursorPos(1,1)\n')
-                fi.write('monitor.write("The shop is currently updating...")\n')
-
-                fi.write('os.sleep(10)\n')
-                fi.write('shell.run("rm installer.lua")\n')
-                fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua")\n')
-                fi.write('shell.run("installer autostart")')
-                fi.close()
-                shell.run("reboot")
-            end
-            os.sleep(60)
-        end
-    end
-end
-
-function frontend()
-    local monitor = peripheral.find("monitor")
-    y = 1
-    function mprint(msg)
-        monitor.setCursorPos(1,y)
-        monitor.write(msg)
-        y = y + 1
-    end
-    function rerender()
-        y = 1
-        monitor.setBackgroundColor(config.Theme["Background-Color"])
-        monitor.clear()
-        monitor.setTextColour(config.Theme["Text-Color"])
-        monitor.setTextScale(0.5)
-        mprint(config["Shop-Name"].."\n")
-        mprint(config["Description"])
-        mprint("Shop owned by: "..config["Owner"].."\n")
-        --mprint("Running: Kristed\n")
-        mprint("Kristed By: Bagi_Adam")
-
-        mprint("")
-        local kukucska = {}
-        local w,h = monitor.getSize()
-        monitor.setCursorPos(1,y)
-        y = y + 1
-        monitor.write("Stock Name")
-        monitor.setCursorPos(w-#("price")+1,y-1)
-        monitor.write("price")
-        function addItem(id, name, price)
-            monitor.setCursorPos(1,y)
-            y = y + 1
-            monitor.write(stockLookup(id).."")
-            monitor.setCursorPos(#("Stock")+2,y-1)
-            monitor.write(name)
-            monitor.setCursorPos(w-#(price.."kst")+1,y-1)
-            monitor.write(price.."kst")
-            table.insert(kukucska, {line=y-1,id=id,name=name,price=price,stock=stockLookup(id)})
-        end
-        --mprint("")
-        --addItem("Stock", "Name", "")
-        --addItem("Test", 10, 10)
-        for k,v in ipairs(config.Items) do
-            addItem(v.Id, v.Name, v.Price)
-        end
-
-        monitor.setCursorPos(1,h-1)
-        monitor.write("To buy something: /pay "..config["Wallet-id"].." <price> itemname=<itemname>")
-        monitor.setCursorPos(1,h)
-        monitor.write("For example: /pay "..config["Wallet-id"].." "..config.Items[1].Price.." itemname="..config.Items[1].Name)
-        monitor.setCursorPos(w-#("Kristed v"..config.Version)+1,h)
-        monitor.write("Kristed v"..config.Version)
-        return kukucska
-    end
-    local kuka = rerender()
-    while true do
-        --rerender()
-        for k,v in ipairs(kuka) do
-            if stockLookup(v.id) ~= v.stock then
-                local w,h = monitor.getSize()
-                monitor.setCursorPos(1,v.line)
-                monitor.clearLine()
-                monitor.write(stockLookup(v.id).."")
-                monitor.setCursorPos(#("Stock")+2,v.line)
-                monitor.write(v.name)
-                monitor.setCursorPos(w-#(v.price.."kst")+1,v.line)
-                monitor.write(v.price.."kst")
-                kuka[k].stock = stockLookup(v.id)
-            end
-        end
-        os.sleep(10)
-    end
-end
-
+local frontend, backend, updater = require("module.frontend"), require("module.backend"), require("module.updater")
 parallel.waitForAny(backend, frontend, redstoneos, updater)

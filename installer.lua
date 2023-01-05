@@ -11,7 +11,7 @@ local text = [[
 ]]
 print(text)
 print("Installer")
-print("By. Bagi_Adam")
+print("By. VectorTech team (Bagi_Adam, BomberPlayz_)")
 
 local branch = "main"
 
@@ -29,6 +29,14 @@ shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.
 --shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/json.lua json.lua")
 shell.run("rm discordWebhook.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/discordWebhook.lua discordWebhook.lua")
+
+print("Downloading modules...")
+shell.run("rm module/")
+shell.run("mkdir module")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/updater.lua module/updater.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/backend.lua module/backend.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/frontend.lua module/frontend.lua")
+
 
 print("Downloading main system...")
 shell.run("rm main.lua")
