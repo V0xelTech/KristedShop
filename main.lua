@@ -15,7 +15,7 @@ if _G.KristedSocket ~= nil then
 end
 
 local kristapi = require("kristapi")
-local json = require("json")
+--local json = require("json")
 local dw = require("discordWebhook")
 local config = require("config")
 local url = "https://krist.dev"
@@ -87,7 +87,8 @@ function backend()
     socket.send('{"type":"subscribe","event":"transactions","id":1}')
     while true do
         local dta = socket.receive()
-        dta = json.decode(dta)
+        --dta = json.decode(dta)
+        dta = textutils.unserialiseJSON(dta)
         if dta.type == "event" and dta.event == "transaction" then
             local trans = dta.transaction
             if trans.to == config["Wallet-id"] then

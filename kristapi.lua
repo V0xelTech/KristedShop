@@ -1,5 +1,5 @@
 local api = {}
-local json = require("json")
+--local json = require("json")
 local url = "https://krist.dev"
 
 api.makeTransaction = function(privateKey, targetAddress, value, metadata)
@@ -12,12 +12,13 @@ api.makeTransaction = function(privateKey, targetAddress, value, metadata)
         ["amount"]=value,
         ["metadata"]=metadata
     }
-    local request = http.post(url.."/transactions/", json.encode(kutyus), {["Content-Type"] = "application/json"})
+    local request = http.post(url.."/transactions/", --[[json.encode(kutyus)]]textutils.serialiseJSON(kutyus), {["Content-Type"] = "application/json"})
     return request.readAll()
 end
 api.getAddress = function(address)
     local request = http.get(url.."/addresses/"..address)
-    local data = json.decode(request.readAll())
+    --local data = json.decode(request.readAll())
+    local data = textutils.unserialiseJSON(request.readAll())
     return data.address
 end
 function mysplit (inputstr, sep)
@@ -45,7 +46,8 @@ api.parseMeta = function(meta)
 end
 api.websocket = function()
     local fr = http.post(url.."/ws/start","")
-    local data = json.decode(fr.readAll())
+    --local data = json.decode(fr.readAll())
+    local data = textutils.unserialiseJSON(fr.readAll())
     local soc = data.url
     local socket = http.websocket(soc)
     --[[print(socket.send('{"type":"subscribe","event":"transactions","id":1}'))
