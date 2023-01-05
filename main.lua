@@ -195,7 +195,7 @@ function updater()
                 fi.close()
                 shell.run("reboot")
             end
-            os.sleep(10)
+            os.sleep(60)
         end
     end
 end
