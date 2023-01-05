@@ -25,8 +25,8 @@ end
 print("Downloading apis...")
 shell.run("rm kristapi.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/kristapi.lua kristapi.lua")
-shell.run("rm json.lua")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/json.lua json.lua")
+--shell.run("rm json.lua")
+--shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/json.lua json.lua")
 shell.run("rm discordWebhook.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/discordWebhook.lua discordWebhook.lua")
 
