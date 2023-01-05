@@ -167,9 +167,12 @@ function frontend()
                 -- check if the text contains things like {Shop-Name} {Shop-Description} etc.
                 -- the text may have a "-" symbol too. Make it so that it won't confuse the pattern
                 local text = v.text
-                for k,v in pairs(config) do
-                    text = string.gsub(text, "{"..k.."}", v)
+                for kk,vv in pairs(config) do
+                    print("{"..kk.."}")
+                    text = string.gsub(text, "{"..esc(kk).."}", vv)
                 end
+                print(text)
+                v.text = text
             end
         end
 
@@ -204,8 +207,8 @@ function frontend()
 
         for k,v in ipairs(layout) do
             if v.type == "background" then
-                bg = v.bg
-                tc = v.text
+                bg = tonumber(v.bg)
+                tc = tonumber(v.text)
             end
         end
 
@@ -298,7 +301,7 @@ function frontend()
                         monitor.setBackgroundColor(colors.background[cIndex])
                         monitor.write(string.rep(" ",j.xend-j.xstart+1))
                         monitor.setCursorPos(j.xstart,y)
-                        monitor.setTextColour(colors[cIndex+1])
+                        monitor.setTextColour(colors.text[cIndex])
                         mprint(j.text,j.xstart,j.xend,j.align)
 
                     end

@@ -10,7 +10,7 @@ return {
     },
     {
         type="Text",
-        text="This is a test shop. My description is: {Shop-Description}",
+        text="This is a test shop. My description is: {Description}",
         align="center",
     },
     {
