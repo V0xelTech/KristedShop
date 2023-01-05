@@ -220,19 +220,19 @@ function frontend()
         mprint("Running: Kristed\n")
         mprint("By: Bagi_Adam")
 
-        --local kukucska = {}
-        function addItem(stock, name, price)
-            mprint(stock.."  "..name)
+        local kukucska = {}
+        function addItem(id, name, price)
+            mprint(stockLookup(id).."  "..name)
             local w,h = monitor.getSize()
             monitor.setCursorPos(w-#(price.."kst"),y-1)
             monitor.write(price.."kst")
-            --table.insert(kukucska, )
+            table.insert(kukucska, {line=y-1,id=id,name=name,price=price,stock=stockLookup(id)})
         end
         mprint("")
         addItem("Stock", "Name", "")
         --addItem("Test", 10, 10)
         for k,v in ipairs(config.Items) do
-            addItem(stockLookup(v.Id), v.Name, v.Price)
+            addItem(v.Id, v.Name, v.Price)
         end
 
         local w,h = monitor.getSize()
@@ -240,10 +240,22 @@ function frontend()
         monitor.write("To buy something: /pay "..config["Wallet-id"].." <price> itemname=<itemname>")
         monitor.setCursorPos(1,h)
         monitor.write("For example: /pay "..config["Wallet-id"].." 10 itemname="..config.Items[1].Name)
+        return kukucska
     end
-    rerender()
+    local kuka = rerender()
     while true do
-        rerender()
+        --rerender()
+        for k,v in ipairs(kuka) do
+            if stockLookup(v.id) ~= v.stock then
+                monitor.setCursorPos(1,v.line)
+                monitor.clearLine()
+                monitor.write(stockLookup(v.id).."  "..v.name)
+                local w,h = monitor.getSize()
+                monitor.setCursorPos(w-#(v.price.."kst"),v.line)
+                monitor.write(v.price.."kst")
+                kuka[k].stock = stockLookup(v.id)
+            end
+        end
         os.sleep(10)
     end
 end
