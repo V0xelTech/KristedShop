@@ -1,5 +1,7 @@
 local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw
 
+
+
 function stockLookup(id)
     local chest = peripheral.wrap(config["Chest-Id"])
     local count = 0
@@ -40,7 +42,7 @@ function frontend()
         mprint(config["Description"])
         mprint("Shop owned by: "..config["Owner"].."\n")
         --mprint("Running: Kristed\n")
-        mprint("Kristed By: Bagi_Adam")
+        mprint("Kristed By: VectorTech team (Bagi_Adam, BomberPlayz_)")
 
         mprint("")
         local kukucska = {}
