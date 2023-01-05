@@ -221,7 +221,7 @@ function frontend()
         mprint(config["Description"])
         mprint("Shop owned by: "..config["Owner"].."\n")
         --mprint("Running: Kristed\n")
-        mprint("By: Bagi_Adam")
+        mprint("Kristed By: Bagi_Adam")
 
         mprint("")
         local kukucska = {}
