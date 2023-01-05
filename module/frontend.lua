@@ -215,6 +215,28 @@ function frontend()
                         j.text = string.gsub(j.text, "{price}", vv.Price)
                         j.text = string.gsub(j.text, "{stock}", stockLookup(vv.Id))
                     end
+                    local overallWidther = 0
+                    for i,j in ipairs(v.columns) do
+                        -- set xstart and xend. Do almost the same as in the first pass.
+                        if j.width == nil then
+                            j.width = w/4
+                        end
+                        overallWidther = overallWidther + j.width
+                    end
+                    local multiplierer = (v.xend-v.xstart)/overallWidther
+                    for i,j in ipairs(v.columns) do
+                        if j.width == nil then
+                            j.width = w/4
+                        end
+                        j.width = j.width * multiplierer
+                        if j.xstart == nil then
+                            j.xstart = v.xstart
+                            v.xstart = v.xstart + j.width
+                        end
+                        if j.xend == nil then
+                            j.xend = j.xstart + j.width
+                        end
+                    end
                     for i,j in ipairs(v.columns) do
                         monitor.setCursorPos(j.xstart,y)
                         monitor.setBackgroundColor(colors[cIndex])
