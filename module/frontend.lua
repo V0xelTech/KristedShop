@@ -47,6 +47,7 @@ function frontendold()
         mprint("")
         local kukucska = {}
         local w,h = monitor.getSize()
+
         monitor.setCursorPos(1,y)
         y = y + 1
         monitor.write("Stock Name")
@@ -117,12 +118,31 @@ function frontend()
         if align == "left" then
             monitor.write(msg)
         elseif align == "center" then
+            --print(xstart, xend, msg)
+            --print(math.floor((xend-xstart)/2-#msg/2))
             monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,y)
             monitor.write(msg)
+            --print("msize: "..w.."x"..h)
         elseif align == "right" then
             monitor.setCursorPos(xend-#msg,y)
             monitor.write(msg)
         end
+    end
+
+
+    local function esc(x)
+        return (x:gsub('%%', '%%%%')
+                 :gsub('^%^', '%%^')
+                 :gsub('%$$', '%%$')
+                 :gsub('%(', '%%(')
+                 :gsub('%)', '%%)')
+                 :gsub('%.', '%%.')
+                 :gsub('%[', '%%[')
+                 :gsub('%]', '%%]')
+                 :gsub('%*', '%%*')
+                 :gsub('%+', '%%+')
+                 :gsub('%-', '%%-')
+                 :gsub('%?', '%%?'))
     end
 
     function render()
@@ -135,12 +155,17 @@ function frontend()
 
         for k,v in ipairs(layout) do
             if v.width == nil then
-                v.width = w/4
+                if v.text then
+                    v.width = w
+                else
+                    v.width = w
+                end
             end
             overallWidth = overallWidth + v.width
 
             if v.text then
                 -- check if the text contains things like {Shop-Name} {Shop-Description} etc.
+                -- the text may have a "-" symbol too. Make it so that it won't confuse the pattern
                 local text = v.text
                 for k,v in pairs(config) do
                     text = string.gsub(text, "{"..k.."}", v)
@@ -148,7 +173,8 @@ function frontend()
             end
         end
 
-        local multiplier = w/overallWidth
+        local multiplier = 1
+        --print(multiplier)
 
         local xer = 1
 
@@ -163,7 +189,7 @@ function frontend()
             end
 
             if v.xstart == nil then
-                v.xstart = xer
+                v.xstart = 1
                 xer = xer + v.width
 
 
@@ -174,7 +200,7 @@ function frontend()
 
         end
 
-        local bg, tc
+        local bg, tc = 0,0
 
         for k,v in ipairs(layout) do
             if v.type == "background" then
@@ -183,6 +209,9 @@ function frontend()
             end
         end
 
+        monitor.setBackgroundColor(bg)
+        monitor.clear()
+
         for k,v in ipairs(layout) do
             if v.background ~= nil then
                 monitor.setBackgroundColor(v.background)
@@ -190,7 +219,7 @@ function frontend()
                 monitor.setBackgroundColor(bg)
             end
             if v.textcolor ~= nil then
-                monitor.setTextColour(v.color)
+                monitor.setTextColour(tonumber(v.color))
             else
                 monitor.setTextColour(tc)
             end
@@ -209,47 +238,71 @@ function frontend()
             if v.type == "SellTable" then
                 local colors = v.colors
                 local cIndex = 1
+
+                local overallWidther = 0
+                for i,j in ipairs(v.columns) do
+                    -- set xstart and xend. Do almost the same as in the first pass.
+                    if j.width == nil then
+                        j.width = w/4
+                    end
+                    overallWidther = overallWidther + j.width
+                end
+                local multiplierer = (v.xend-v.xstart)/overallWidther
+                local xor = v.xstart
+                -- write the column names centered
+                for i,j in ipairs(v.columns) do
+                    if j.width == nil then
+                        j.width = w/4
+                    end
+                    j.width = j.width * multiplierer
+                    if j.xstart == nil then
+                        j.xstart = xor
+                        xor = xor + j.width
+                    end
+                    if j.xend == nil then
+                        j.xend = j.xstart + j.width
+                    end
+                end
+
+                cIndex = cIndex + 1
+                if cIndex > #colors.background then
+                    cIndex = 1
+                end
+                for i,j in ipairs(v.columns) do
+                    monitor.setCursorPos(j.xstart,y)
+                    monitor.setBackgroundColor(colors.background[cIndex])
+                    monitor.write(string.rep(" ",j.xend-j.xstart+1))
+                    monitor.setCursorPos(j.xstart,y)
+                    monitor.setTextColour(colors.text[cIndex])
+                    mprint(j.name,j.xstart,j.xend,j.align)
+
+                end
+
+                y = y + 1
+
                 for kk,vv in ipairs(config.Items) do
                     for i,j in ipairs(v.columns) do
                         j.text = string.gsub(j.text, "{name}", vv.Name)
                         j.text = string.gsub(j.text, "{price}", vv.Price)
                         j.text = string.gsub(j.text, "{stock}", stockLookup(vv.Id))
                     end
-                    local overallWidther = 0
-                    for i,j in ipairs(v.columns) do
-                        -- set xstart and xend. Do almost the same as in the first pass.
-                        if j.width == nil then
-                            j.width = w/4
-                        end
-                        overallWidther = overallWidther + j.width
-                    end
-                    local multiplierer = (v.xend-v.xstart)/overallWidther
-                    for i,j in ipairs(v.columns) do
-                        if j.width == nil then
-                            j.width = w/4
-                        end
-                        j.width = j.width * multiplierer
-                        if j.xstart == nil then
-                            j.xstart = v.xstart
-                            v.xstart = v.xstart + j.width
-                        end
-                        if j.xend == nil then
-                            j.xend = j.xstart + j.width
-                        end
+
+                    --print(v.xend-v.xstart)
+                    cIndex = cIndex + 1
+                    if cIndex > #colors.background then
+                        cIndex = 1
                     end
                     for i,j in ipairs(v.columns) do
+
                         monitor.setCursorPos(j.xstart,y)
-                        monitor.setBackgroundColor(colors[cIndex])
+                        monitor.setBackgroundColor(colors.background[cIndex])
                         monitor.write(string.rep(" ",j.xend-j.xstart+1))
                         monitor.setCursorPos(j.xstart,y)
                         monitor.setTextColour(colors[cIndex+1])
                         mprint(j.text,j.xstart,j.xend,j.align)
-                        y = y + 1
-                        cIndex = cIndex + 1
-                        if cIndex > #colors then
-                            cIndex = 1
-                        end
+
                     end
+                    y = y + 1
                 end
             end
         end
