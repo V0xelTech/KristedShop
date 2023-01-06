@@ -5,7 +5,6 @@ return {
   ["Wallet-Key"]="", --Your wallet privateKey
   ["Wallet-id"]="", --Your wallet address
   ["Redstone_Output"]="top", --The redstone output
-  ["Chest-Id"]="minecraft:chest_", --The chest id of your network
   ["Self-Id"]="turtle_", --The turtle id of your network
   ["Discord-Webhook"]=false, --Enable if you want discord webhook
   ["Discord-Webhook-URL"]="", --Your discord webhook url here

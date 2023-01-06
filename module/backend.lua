@@ -12,11 +12,16 @@ function mysplit (inputstr, sep)
 end
 
 function stockLookup(id)
-    local chest = peripheral.wrap(config["Chest-Id"])
     local count = 0
-    for k,v in pairs(chest.list()) do
-        if v.name == id then
-            count = count + v.count
+    local rawNames = peripheral.getNames()
+    for k,v in ipairs(rawNames) do
+        if string.match(v, "chest") == "chest" then
+            local chest = peripheral.wrap(v)
+            for kk,vv in pairs(chest.list()) do
+                if vv.name == id then
+                    count = count + vv.count
+                end
+            end
         end
     end
     return count
@@ -42,12 +47,17 @@ function preDropItem(id, count)
 end
 
 function dropItem(id, limit)
-    local chest = peripheral.wrap(config["Chest-Id"])
-    for k,v in pairs(chest.list()) do
-        if v.name == id then
-            local co = chest.pushItems(config["Self-Id"],k,limit,1)
-            turtle.drop(limit)
-            return co
+    local rawNames = peripheral.getNames()
+    for k,v in ipairs(rawNames) do
+        if string.match(v, "chest") == "chest" then
+            local chest = peripheral.wrap(v)
+            for kk,vv in pairs(chest.list()) do
+                if vv.name == id then
+                    local co = chest.pushItems(config["Self-Id"],kk,limit,1)
+                    turtle.drop(limit)
+                    return co
+                end
+            end
         end
     end
 end
