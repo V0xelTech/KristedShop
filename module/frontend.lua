@@ -323,7 +323,7 @@ function frontend()
                 end
                 for i,j in ipairs(v.columns) do
                     monitor.setCursorPos(j.xstart,y)
-                    monitor.setBackgroundColor(colors.background[cIndex])
+                    monitor.setBackgroundColor(v.colors.header or colors.background[cIndex])
                     monitor.write(string.rep(" ",j.xend-j.xstart+1))
                     --monitor.setCursorPos(j.xstart,y)
                     monitor.setTextColour(colors.text[cIndex])

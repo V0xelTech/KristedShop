@@ -19,7 +19,7 @@ return {
         colors={
             background={0x100,0x80},
             text={1,1},
-            header={0x8},
+            header=0x8,
         },
         columns={
             {
