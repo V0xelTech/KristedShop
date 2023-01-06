@@ -27,6 +27,7 @@ end
 function frontendold()
     local monitor = peripheral.find("monitor")
     y = 1
+    by = 1
     function mprint(msg)
         monitor.setCursorPos(1,y)
         monitor.write(msg)
@@ -104,7 +105,8 @@ function frontend()
     local monitor = peripheral.find("monitor")
     local w,h = monitor.getSize()
     local y = 1
-    function mprint(msg,xstart,xend,align)
+    local by = 0
+    function mprint(msg,xstart,xend,align,halign)
         if xstart == nil then
             xstart = 1
         end
@@ -114,18 +116,56 @@ function frontend()
         if align == nil then
             align = "left"
         end
-        monitor.setCursorPos(xstart,y)
+        if halign == nil then
+            halign = "top"
+        end
+        monitor.setCursorPos(xstart,fy or y)
         if align == "left" then
-            monitor.write(msg)
+            if halign == "top" then
+                monitor.write(msg)
+                y = y + 1
+            elseif halign == "center" then
+                monitor.setCursorPos(xstart,math.floor((h/2)-(#msg/2)))
+                monitor.write(msg)
+            elseif halign == "bottom" then
+                monitor.setCursorPos(xstart,h-by)
+                monitor.write(msg)
+                by = by + 1
+            end
         elseif align == "center" then
             --print(xstart, xend, msg)
             --print(math.floor((xend-xstart)/2-#msg/2))
-            monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,y)
-            monitor.write(msg)
-            --print("msize: "..w.."x"..h)
+
+
+            --monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,y)
+            --monitor.write(msg)
+            if halign == "top" then
+                monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,y)
+                monitor.write(msg)
+                y = y + 1
+            elseif halign == "center" then
+                monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,math.floor((h/2)-(#msg/2)))
+                monitor.write(msg)
+            elseif halign == "bottom" then
+                monitor.setCursorPos(math.floor((xend-xstart)/2-#msg/2)+xstart,h-by)
+                monitor.write(msg)
+                by = by + 1
+            end
         elseif align == "right" then
-            monitor.setCursorPos(xend-#msg,y)
-            monitor.write(msg)
+            --monitor.setCursorPos(xend-#msg,y)
+            --monitor.write(msg)
+            if halign == "top" then
+                monitor.setCursorPos(xend-#msg,y)
+                monitor.write(msg)
+                y = y + 1
+            elseif halign == "center" then
+                monitor.setCursorPos(xend-#msg,math.floor((h/2)-(#msg/2)))
+                monitor.write(msg)
+            elseif halign == "bottom" then
+                monitor.setCursorPos(xend-#msg,h-by)
+                monitor.write(msg)
+                by = by + 1
+            end
         end
     end
 
@@ -147,6 +187,7 @@ function frontend()
 
     function render()
         y = 1
+        by = 0
 
         -- pass 1, render the background and set the text' xstart and xend based on the 'width' property in the elements of layout. If the overall width is bigger than the monitor's width, it will be resized to fit the monitor's width.
         -- if it is smaller, it is stretched to fit the monitor's width.
@@ -212,8 +253,7 @@ function frontend()
             end
         end
 
-        monitor.setBackgroundColor(bg)
-        monitor.clear()
+
 
         for k,v in ipairs(layout) do
             if v.background ~= nil then
@@ -227,16 +267,26 @@ function frontend()
                 monitor.setTextColour(tc)
             end
             if v.type == "Header" then
-                mprint(v.text,v.xstart,v.xend,v.align)
-                y = y + 1
-                -- draw a horizontal line below the header
+                monitor.setCursorPos(v.xstart,v.y and v.y or y)
+                monitor.setBackgroundColor(tonumber(v.background or bg))
+                --monitor.write(string.rep(" ",v.xend-v.xstart+1))
+                mprint(string.rep(" ",v.xend-v.xstart+1),v.xstart,v.xend,"left",v.align_h)
+                monitor.setCursorPos(v.xstart,v.y and v.y+1 or y)
+                monitor.setBackgroundColor(tonumber(v.background or bg))
+                --monitor.write(string.rep(" ",v.xend-v.xstart+1))
+
+                mprint(string.rep(" ",v.xend-v.xstart+1),v.xstart,v.xend,"left",v.align_h)
                 monitor.setCursorPos(v.xstart,y)
-                monitor.write(string.rep(" ",v.xend-v.xstart+1))
-                y = y + 2
+                y = y - 1
+                mprint(v.text,v.xstart,v.xend,"center", v.align_h)
+
+                -- draw a horizontal line below the header
+                monitor.setCursorPos(v.xstart,v.y and v.y+2 or y)
+                --monitor.write(string.rep(" ",v.xend-v.xstart+1))
+                mprint(string.rep(" ",v.xend-v.xstart+1),v.xstart,v.xend,"left",v.align_h)
             end
             if v.type == "Text" then
-                mprint(v.text,v.xstart,v.xend,v.align)
-                y = y + 1
+                mprint(v.text,v.xstart,v.xend,v.align,v.align_h)
             end
             if v.type == "SellTable" then
                 local colors = v.colors
@@ -277,18 +327,17 @@ function frontend()
                     monitor.write(string.rep(" ",j.xend-j.xstart+1))
                     monitor.setCursorPos(j.xstart,y)
                     monitor.setTextColour(colors.text[cIndex])
-                    mprint(j.name,j.xstart,j.xend,j.align)
+                    mprint(j.name,j.xstart,j.xend,j.align, v.align_h)
+                    y = y - 1
 
                 end
 
                 y = y + 1
 
+
+
                 for kk,vv in ipairs(config.Items) do
-                    for i,j in ipairs(v.columns) do
-                        j.text = string.gsub(j.text, "{name}", vv.Name)
-                        j.text = string.gsub(j.text, "{price}", vv.Price)
-                        j.text = string.gsub(j.text, "{stock}", stockLookup(vv.Id))
-                    end
+
 
                     --print(v.xend-v.xstart)
                     cIndex = cIndex + 1
@@ -297,12 +346,20 @@ function frontend()
                     end
                     for i,j in ipairs(v.columns) do
 
+                        local text = j.text
+                        text = string.gsub(text, "{name}", vv.Name)
+                        text = string.gsub(text, "{price}", vv.Price)
+                        text = string.gsub(text, "{stock}", stockLookup(vv.Id))
+
                         monitor.setCursorPos(j.xstart,y)
                         monitor.setBackgroundColor(colors.background[cIndex])
-                        monitor.write(string.rep(" ",j.xend-j.xstart+1))
+                        --monitor.write(string.rep(" ",j.xend-j.xstart+1))
+                        mprint(string.rep(" ",j.xend-j.xstart+1),j.xstart,j.xend,"left",v.align_h)
+                        y = y-1
                         monitor.setCursorPos(j.xstart,y)
                         monitor.setTextColour(colors.text[cIndex])
-                        mprint(j.text,j.xstart,j.xend,j.align)
+                        mprint(text,j.xstart,j.xend,j.align, v.align_h)
+                        y = y - 1
 
                     end
                     y = y + 1
@@ -310,7 +367,16 @@ function frontend()
             end
         end
     end
+    local bg, tc = 0,0
 
+    for k,v in ipairs(layout) do
+        if v.type == "background" then
+            bg = tonumber(v.bg)
+            tc = tonumber(v.text)
+        end
+    end
+    monitor.setBackgroundColor(bg)
+    monitor.clear()
     while true do
         render()
         os.sleep(5)

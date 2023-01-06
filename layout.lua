@@ -6,7 +6,8 @@ return {
     },
     {
         type="Header",
-        text="TestShop. My name is: {Shop-Name}"
+        text="TestShop. My name is: {Shop-Name}",
+        background=0x4000,
     },
     {
         type="Text",
@@ -29,7 +30,7 @@ return {
             {
                 name="Name",
                 width=30,
-                align="center",
+                align="left",
                 text="{name}"
             },
             {
@@ -44,10 +45,12 @@ return {
         type="Text",
         text="To buy something: /pay {Wallet-id} <price> itemname=<itemname>",
         align="center",
+        align_h="bottom"
     },
     {
         type="Text",
         text="Shop powered by Kristed v{Version}",
         align="right",
+        align_h="bottom"
     }
 }
