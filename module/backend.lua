@@ -81,7 +81,7 @@ function backend()
                             local tc = false
                             local vav = nil
                             for k,v in ipairs(config.Items) do
-                                if v.Name == meta.itemname then
+                                if v.Name == meta.itemname or v.Alias == meta.itemname then
                                     tc = true
                                     vav = v
                                 end

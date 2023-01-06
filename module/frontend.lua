@@ -214,10 +214,10 @@ function frontend()
                 -- the text may have a "-" symbol too. Make it so that it won't confuse the pattern
                 local text = v.text
                 for kk,vv in pairs(config) do
-                    print("{"..kk.."}")
+                    --print("{"..kk.."}")
                     text = string.gsub(text, "{"..esc(kk).."}", vv)
                 end
-                print(text)
+                --print(text)
                 v.text = text
             end
         end
