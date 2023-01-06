@@ -386,7 +386,7 @@ function frontend(layout)
                         text = string.gsub(text, "{stock}", stockLookup(vv.Id))
                         text = string.gsub(text, "{alias}", vv.Alias or "")
 
-                        if not j.lasttext or j.lasttext ~= text then
+                        if not j.lasttext or j.lasttext ~= text or true then
 
                             --monitor.setCursorPos(j.xstart,y)
                             monitor.setBackgroundColor(colors.background[cIndex])
