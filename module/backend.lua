@@ -104,7 +104,7 @@ function backend()
                                     end
                                     if config["Discord-Webhook"] then
                                         dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
-                                                {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=count},{["name"]="Exchange",["value"]=exchange},{["name"]="Change",["value"]=change}})
+                                                {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=tostring(count)},{["name"]="Exchange",["value"]=tostring(exchange)},{["name"]="Change",["value"]=tostring(change)}})
                                     end
                                 else
                                     kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
