@@ -1,12 +1,27 @@
 local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw
+local dfpwm = require("cc.audio.dfpwm")
+local speaker = peripheral.find("speaker")
 
-function updater()
+function updater(layout)
     if config["Enable-Automatic-Update"] then
         while true do
             local nver = http.get("https://raw.githubusercontent.com/afonya2/KristedShop/main/version.txt").readAll()
             if config.Version ~= nver then
                 local monitor = peripheral.find("monitor")
                 local w,h = monitor.getSize()
+                local decoder = dfpwm.make_decoder()
+
+                for chunk in io.lines("jingle_3.dfpwm", 16 * 1024) do
+                    local buffer = decoder(chunk)
+
+                    while not speaker.playAudio(buffer, 1) do
+                        os.pullEvent("speaker_audio_empty")
+                    end
+                end
+
+                table.insert(layout, {type = "text", text = "Automatic update", align = "right", color = 0x4000}, 1)
+                table.insert(layout, {type = "text", text = "in ?? seconds", align = "right", color = 0x4000}, 1)
+
                 for i=10,1,-1 do
                     layout[2].text = "in "..i.." seconds"
                     os.sleep(1)

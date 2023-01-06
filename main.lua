@@ -72,7 +72,7 @@ function showError(err)
     monitor.write(err)
 end
 
-local frontend, backend, updater = require("module.frontend"), require("module.backend"), require("module.updater")
+local frontend, backend--[[, updater]] = require("module.frontend"), require("module.backend")--[[, require("module.updater")]]
 --parallel.waitForAny(backend, frontend, redstoneos, updater)
 parallel.waitForAny(function()
     local stat, err = pcall(backend)
@@ -91,10 +91,10 @@ function()
     if not stat then
         showError(err)
     end
-end,
-function()
+end
+--[[function()
     local stat, err = pcall(updater)
     if not stat then
         showError(err)
     end
-end)
+end]])

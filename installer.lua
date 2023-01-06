@@ -33,10 +33,18 @@ shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.
 print("Downloading modules...")
 shell.run("rm module/")
 shell.run("mkdir module")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/updater.lua module/updater.lua")
+--shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/updater.lua module/updater.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/backend.lua module/backend.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/frontend.lua module/frontend.lua")
 
+print("Downloading frontend-modules")
+shell.run("rm frontend-module/")
+shell.run("mkdir frontend-module")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/frontend-module/updater.lua frontend-module/updater.lua")
+
+print("Downloading music")
+shell.run("rm jingle_3.dfpwm")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/jingle_3.dfpwm jingle_3.dfpwm")
 
 print("Downloading main system...")
 shell.run("rm main.lua")

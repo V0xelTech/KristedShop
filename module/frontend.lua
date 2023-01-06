@@ -422,4 +422,32 @@ function frontend(layout)
     end
 end
 
-return frontend
+function showError(err)
+    local monitor = peripheral.find("monitor")
+    monitor.setBackgroundColor(0x100)
+    monitor.setTextColor(0x4000)
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("The shop had an error")
+    monitor.setCursorPos(1,2)
+    monitor.write(err)
+end
+
+function start()
+    local layout = require("../layout")
+    local updater = require("../frontend-modules/updater")
+    parallel.waitForAny(function()
+        local stat, err = pcall(updater,layout)
+        if not stat then
+            showError(err)
+        end
+    end,
+    function()
+        local stat, err = pcall(frontend,layout)
+        if not stat then
+            showError(err)
+        end
+    end)
+end
+
+return start
