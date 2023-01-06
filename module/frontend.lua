@@ -305,10 +305,17 @@ function frontend(layout)
                 mprint(string.rep(" ",v.xend-v.xstart+1),v.xstart,v.xend,"left",v.align_h)
             end
             if v.type == "Text" then
+                if v.lasttext and v.lasttext ~= v.text then
+                    -- clear ONLY the area where the text was but not the whole line
+                    monitor.setCursorPos(v.xstart,v.y and v.y or y)
+                    monitor.setBackgroundColor(tonumber(v.background or bg))
+                    monitor.write(string.rep(" ",v.xend-v.xstart+1))
+                end
                 if v.color then
                     monitor.setTextColour(tonumber(v.color))
                 end
                 mprint(v.text,v.xstart,v.xend,v.align,v.align_h)
+                v.lasttext = v.text
             end
             if v.type == "SellTable" then
                 local colors = v.colors

@@ -11,11 +11,13 @@ function updater(layout)
                 local w,h = monitor.getSize()
                 local decoder = dfpwm.make_decoder()
 
-                for chunk in io.lines("jingle_3.dfpwm", 16 * 1024) do
-                    local buffer = decoder(chunk)
+                if speaker ~= nil then
+                    for chunk in io.lines("jingle_3.dfpwm", 16 * 1024) do
+                        local buffer = decoder(chunk)
 
-                    while not speaker.playAudio(buffer, 1) do
-                        os.pullEvent("speaker_audio_empty")
+                        while not speaker.playAudio(buffer, 1) do
+                            os.pullEvent("speaker_audio_empty")
+                        end
                     end
                 end
 
