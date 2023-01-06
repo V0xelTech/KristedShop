@@ -1,8 +1,8 @@
 local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw
 
 
-
-function stockLookup(id)
+local itemCache = {}
+--[[function stockLookup(id)
     local count = 0
     local rawNames = peripheral.getNames()
     for k,v in ipairs(rawNames) do
@@ -16,6 +16,31 @@ function stockLookup(id)
         end
     end
     return count
+end]]
+-- the same as above but uses the itemcache variable. Stores the item data in the item cache and a timestamp. If it is older than 5 seconds then it updates it.
+function stockLookup(id)
+    if itemCache[id] == nil then
+        itemCache[id] = {}
+        itemCache[id].count = 0
+        itemCache[id].time = os.time()
+    end
+    if os.time() - itemCache[id].time > 5 then
+        local count = 0
+        local rawNames = peripheral.getNames()
+        for k,v in ipairs(rawNames) do
+            if string.match(v, "chest") == "chest" then
+                local chest = peripheral.wrap(v)
+                for kk,vv in pairs(chest.list()) do
+                    if vv.name == id then
+                        count = count + vv.count
+                    end
+                end
+            end
+        end
+        itemCache[id].count = count
+        itemCache[id].time = os.time()
+    end
+    return itemCache[id].count
 end
 
 function mysplit (inputstr, sep)
@@ -104,8 +129,9 @@ function frontendold()
     end
 end
 
-function frontend()
-    local layout = require("../layout")
+function frontend(layout)
+
+    local itemCache = {}
 
     local monitor = peripheral.find("monitor")
     local w,h = monitor.getSize()
@@ -291,6 +317,9 @@ function frontend()
                 mprint(string.rep(" ",v.xend-v.xstart+1),v.xstart,v.xend,"left",v.align_h)
             end
             if v.type == "Text" then
+                if v.color then
+                    monitor.setTextColour(tonumber(v.color))
+                end
                 mprint(v.text,v.xstart,v.xend,v.align,v.align_h)
             end
             if v.type == "SellTable" then
@@ -357,15 +386,19 @@ function frontend()
                         text = string.gsub(text, "{stock}", stockLookup(vv.Id))
                         text = string.gsub(text, "{alias}", vv.Alias or "")
 
-                        --monitor.setCursorPos(j.xstart,y)
-                        monitor.setBackgroundColor(colors.background[cIndex])
-                        --monitor.write(string.rep(" ",j.xend-j.xstart+1))
-                        mprint(string.rep(" ",j.xend-j.xstart+1),j.xstart,j.xend,"left",v.align_h)
-                        y = y-1
-                        --monitor.setCursorPos(j.xstart,y)
-                        monitor.setTextColour(colors.text[cIndex])
-                        mprint(text,j.xstart,j.xend,j.align, v.align_h)
-                        y = y - 1
+                        if not j.lasttext or j.lasttext ~= text then
+
+                            --monitor.setCursorPos(j.xstart,y)
+                            monitor.setBackgroundColor(colors.background[cIndex])
+                            --monitor.write(string.rep(" ",j.xend-j.xstart+1))
+                            mprint(string.rep(" ",j.xend-j.xstart+1),j.xstart,j.xend,"left",v.align_h)
+                            y = y-1
+                            --monitor.setCursorPos(j.xstart,y)
+                            monitor.setTextColour(colors.text[cIndex])
+                            mprint(text,j.xstart,j.xend,j.align, v.align_h)
+                            y = y - 1
+                            j.lasttext = text
+                        end
 
                     end
                     y = y + 1
@@ -385,7 +418,7 @@ function frontend()
     monitor.clear()
     while true do
         render()
-        os.sleep(5)
+        os.sleep(0.5)
     end
 end
 

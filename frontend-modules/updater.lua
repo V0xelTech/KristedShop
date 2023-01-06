@@ -8,22 +8,10 @@ function updater()
                 local monitor = peripheral.find("monitor")
                 local w,h = monitor.getSize()
                 for i=10,1,-1 do
-                    monitor.setTextColor(0x4000)
-                    monitor.setCursorPos(w-#("Automatic update"),1)
-                    monitor.clearLine()
-                    monitor.write("Automatic update")
-                    monitor.setCursorPos(w-#("in "..i.." seconds"),2)
-                    monitor.clearLine()
-                    monitor.write("in "..i.." seconds")
+                    layout[2].text = "in "..i.." seconds"
                     os.sleep(1)
                 end
-                monitor.setTextColor(0x4000)
-                monitor.setCursorPos(w-#("Automatic update"),1)
-                monitor.clearLine()
-                monitor.write("Automatic update")
-                monitor.setCursorPos(w-#("now"),2)
-                monitor.clearLine()
-                monitor.write("now")
+                layout[2].text = "now!"
 
                 local fi = fs.open("startup.lua","w")
                 fi.write('local monitor = peripheral.find("monitor")\n')
