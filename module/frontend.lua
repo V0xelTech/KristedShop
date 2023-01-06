@@ -416,7 +416,13 @@ function frontend(layout)
     end
     monitor.setBackgroundColor(bg)
     monitor.clear()
+    local lele = #layout
     while true do
+        if lele ~= #layout then
+            lele = #layout
+            monitor.setBackgroundColor(bg)
+            monitor.clear()
+        end
         render()
         os.sleep(0.5)
     end
