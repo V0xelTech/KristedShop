@@ -38,9 +38,9 @@ shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/frontend.lua module/frontend.lua")
 
 print("Downloading frontend-modules")
-shell.run("rm frontend-module/")
-shell.run("mkdir frontend-module")
-shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/frontend-module/updater.lua frontend-module/updater.lua")
+shell.run("rm frontend-modules/")
+shell.run("mkdir frontend-modules")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/frontend-modules/updater.lua frontend-modules/updater.lua")
 
 print("Downloading music")
 shell.run("rm jingle_3.dfpwm")
