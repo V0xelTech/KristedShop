@@ -61,5 +61,40 @@ _G.kristedData = {
     kristapi = kristapi
 }
 
+function showError(err)
+    local monitor = peripheral.find("monitor")
+    monitor.setBackgroundColor(0x100)
+    monitor.setTextColor(0x4000)
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("The shop had an error")
+    monitor.setCursorPos(1,2)
+    monitor.write(err)
+end
+
 local frontend, backend, updater = require("module.frontend"), require("module.backend"), require("module.updater")
-parallel.waitForAny(backend, frontend, redstoneos, updater)
+--parallel.waitForAny(backend, frontend, redstoneos, updater)
+parallel.waitForAny(function()
+    local stat, err = pcall(backend)
+    if not stat then
+        showError(err)
+    end
+end,
+function()
+    local stat, err = pcall(frontend)
+    if not stat then
+        showError(err)
+    end
+end,
+function()
+    local stat, err = pcall(redstoneos)
+    if not stat then
+        showError(err)
+    end
+end,
+function()
+    local stat, err = pcall(updater)
+    if not stat then
+        showError(err)
+    end
+end)
