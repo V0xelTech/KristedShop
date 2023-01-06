@@ -355,6 +355,7 @@ function frontend()
                         text = string.gsub(text, "{name}", vv.Name)
                         text = string.gsub(text, "{price}", vv.Price)
                         text = string.gsub(text, "{stock}", stockLookup(vv.Id))
+                        text = string.gsub(text, "{alias}", vv.Alias or "")
 
                         --monitor.setCursorPos(j.xstart,y)
                         monitor.setBackgroundColor(colors.background[cIndex])

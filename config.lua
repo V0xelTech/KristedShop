@@ -16,9 +16,10 @@ return {
     {
       ["Name"]="Example", --Some friendly name
       ["Id"]="minecraft:wheat", --The name of the item
-      ["Price"]=1 --The price / item
+      ["Price"]=1, --The price / item
+      ["Alias"]="empl"
     },
   },
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.0" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
+  ["Version"]="0.2.1" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
 }

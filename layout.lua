@@ -30,7 +30,13 @@ return {
             },
             {
                 name="Name",
-                width=30,
+                width=20,
+                align="left",
+                text="{name}"
+            },
+            {
+                name="Alias",
+                width=10,
                 align="left",
                 text="{name}"
             },
