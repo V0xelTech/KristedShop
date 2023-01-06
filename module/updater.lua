@@ -33,7 +33,6 @@ function updater()
                 fi.write('monitor.setCursorPos(1,1)\n')
                 fi.write('monitor.write("The shop is currently updating...")\n')
 
-                fi.write('os.sleep(10)\n')
                 fi.write('shell.run("rm installer.lua")\n')
                 fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua")\n')
                 fi.write('shell.run("installer autostart")')

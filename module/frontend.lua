@@ -325,7 +325,7 @@ function frontend()
                     monitor.setCursorPos(j.xstart,y)
                     monitor.setBackgroundColor(colors.background[cIndex])
                     monitor.write(string.rep(" ",j.xend-j.xstart+1))
-                    monitor.setCursorPos(j.xstart,y)
+                    --monitor.setCursorPos(j.xstart,y)
                     monitor.setTextColour(colors.text[cIndex])
                     mprint(j.name,j.xstart,j.xend,j.align, v.align_h)
                     y = y - 1
@@ -351,12 +351,12 @@ function frontend()
                         text = string.gsub(text, "{price}", vv.Price)
                         text = string.gsub(text, "{stock}", stockLookup(vv.Id))
 
-                        monitor.setCursorPos(j.xstart,y)
+                        --monitor.setCursorPos(j.xstart,y)
                         monitor.setBackgroundColor(colors.background[cIndex])
                         --monitor.write(string.rep(" ",j.xend-j.xstart+1))
                         mprint(string.rep(" ",j.xend-j.xstart+1),j.xstart,j.xend,"left",v.align_h)
                         y = y-1
-                        monitor.setCursorPos(j.xstart,y)
+                        --monitor.setCursorPos(j.xstart,y)
                         monitor.setTextColour(colors.text[cIndex])
                         mprint(text,j.xstart,j.xend,j.align, v.align_h)
                         y = y - 1

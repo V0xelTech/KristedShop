@@ -6,19 +6,20 @@ return {
     },
     {
         type="Header",
-        text="TestShop. My name is: {Shop-Name}",
+        text="{Shop-Name}",
         background=0x4000,
     },
     {
         type="Text",
-        text="This is a test shop. My description is: {Description}",
+        text="{Description}",
         align="center",
     },
     {
         type="SellTable",
         colors={
             background={0x100,0x80},
-            text={1,1}
+            text={1,1},
+            header={0x8},
         },
         columns={
             {
