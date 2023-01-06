@@ -38,7 +38,7 @@ return {
                 name="Alias",
                 width=10,
                 align="left",
-                text="{name}"
+                text="{alias}"
             },
             {
                 name="Price",

@@ -69,59 +69,71 @@ function backend()
     while true do
         local dta = socket.receive()
         --dta = json.decode(dta)
-        dta = textutils.unserialiseJSON(dta)
-        if dta.type == "event" and dta.event == "transaction" then
-            local trans = dta.transaction
-            if trans.to == config["Wallet-id"] then
-                if trans.metadata ~= nil then
-                    local meta = kristapi.parseMeta(trans.metadata)
-                    if meta["return"] ~= nil then
-                        print(trans.from, trans.to, trans.value, meta["return"])
-                        if meta.itemname ~= nil and meta.itemname ~= "" then
-                            local tc = false
-                            local vav = nil
-                            for k,v in ipairs(config.Items) do
-                                if v.Name == meta.itemname or v.Alias == meta.itemname then
-                                    tc = true
-                                    vav = v
+        if dta ~= nil then
+            dta = textutils.unserialiseJSON(dta)
+            if dta.type == "event" and dta.event == "transaction" then
+                local trans = dta.transaction
+                if trans.to == config["Wallet-id"] then
+                    if trans.metadata ~= nil then
+                        local meta = kristapi.parseMeta(trans.metadata)
+                        if meta["return"] ~= nil then
+                            print(trans.from, trans.to, trans.value, meta["return"])
+                            if meta.itemname ~= nil and meta.itemname ~= "" then
+                                local tc = false
+                                local vav = nil
+                                for k,v in ipairs(config.Items) do
+                                    if v.Name == meta.itemname or v.Alias == meta.itemname then
+                                        tc = true
+                                        vav = v
+                                    end
                                 end
-                            end
-                            if tc then
-                                if stockLookup(vav.Id) > 0 then
-                                    local count = math.floor(trans.value / vav.Price)
-                                    local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
-                                    if exchange >= 0 then
-                                        preDropItem(vav.Id, stockLookup(vav.Id))
-                                        if exchange ~= 0 then
-                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
+                                if tc then
+                                    if stockLookup(vav.Id) > 0 then
+                                        local count = math.floor(trans.value / vav.Price)
+                                        local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
+                                        if exchange >= 0 then
+                                            preDropItem(vav.Id, stockLookup(vav.Id))
+                                            if exchange ~= 0 then
+                                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
+                                            end
+                                        else
+                                            preDropItem(vav.Id, count)
+                                        end
+                                        local change = ((trans.value / vav.Price)-count)*vav.Price
+                                        if change >= 1 then
+                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
+                                        end
+                                        if config["Discord-Webhook"] then
+                                            dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
+                                                    {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=tostring(count)},{["name"]="Exchange",["value"]=tostring(exchange)},{["name"]="Change",["value"]=tostring(change)}})
                                         end
                                     else
-                                        preDropItem(vav.Id, count)
-                                    end
-                                    local change = ((trans.value / vav.Price)-count)*vav.Price
-                                    if change >= 1 then
-                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
-                                    end
-                                    if config["Discord-Webhook"] then
-                                        dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
-                                                {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=tostring(count)},{["name"]="Exchange",["value"]=tostring(exchange)},{["name"]="Change",["value"]=tostring(change)}})
+                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
                                     end
                                 else
-                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
+                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We can't give you: "..meta.itemname)
                                 end
                             else
-                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We can't give you: "..meta.itemname)
+                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=Please specify an itemname")
                             end
                         else
-                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=Please specify an itemname")
+                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Please send the krist from switchcraft, or specify return name")
                         end
                     else
-                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Please send the krist from switchcraft, or specify return name")
+                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Got no meta!")
                     end
-                else
-                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Got no meta!")
                 end
             end
+        else
+            local monitor = peripheral.find("monitor")
+            local w,h = monitor.getSize()
+            monitor.setTextColor(0x4000)
+            monitor.setCursorPos(w-#("Socket problem"),1)
+            monitor.clearLine()
+            monitor.write("Socket problem")
+            monitor.setCursorPos(w-#("Shop with caution"),2)
+            monitor.clearLine()
+            monitor.write("Shop with caution")
         end
         os.sleep(0)
     end
