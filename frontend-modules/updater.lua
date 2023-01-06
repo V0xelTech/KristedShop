@@ -19,8 +19,9 @@ function updater(layout)
                     end
                 end
 
-                table.insert(layout, 1, {type = "text", text = "Automatic update", align = "right", color = 0x4000})
-                table.insert(layout, 2, {type = "text", text = "in ?? seconds", align = "right", color = 0x4000})
+                table.insert(layout, 1, {type = "Text", text = "in ?? seconds", align = "right", color=0x4000})
+                table.insert(layout, 1, {type = "Text", text = "Automatic update", align = "right", color=0x4000})
+
 
                 for i=10,1,-1 do
                     layout[2].text = "in "..i.." seconds"

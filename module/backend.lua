@@ -11,7 +11,7 @@ function mysplit (inputstr, sep)
     return t
 end
 
-function stockLookup(id)
+local function stockLookup(id)
     local count = 0
     local rawNames = peripheral.getNames()
     for k,v in ipairs(rawNames) do

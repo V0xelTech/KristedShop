@@ -2,29 +2,17 @@ local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.
 
 
 local itemCache = {}
---[[function stockLookup(id)
-    local count = 0
-    local rawNames = peripheral.getNames()
-    for k,v in ipairs(rawNames) do
-        if string.match(v, "chest") == "chest" then
-            local chest = peripheral.wrap(v)
-            for kk,vv in pairs(chest.list()) do
-                if vv.name == id then
-                    count = count + vv.count
-                end
-            end
-        end
-    end
-    return count
-end]]
+
 -- the same as above but uses the itemcache variable. Stores the item data in the item cache and a timestamp. If it is older than 5 seconds then it updates it.
-function stockLookup(id)
+local function stockLookup(id)
     if itemCache[id] == nil then
         itemCache[id] = {}
         itemCache[id].count = 0
-        itemCache[id].time = os.time()
+        itemCache[id].time = os.time()-10
     end
+   -- print("KIBASZOTT? "..os.time() - itemCache[id].time)
     if os.time() - itemCache[id].time > 5 then
+
         local count = 0
         local rawNames = peripheral.getNames()
         for k,v in ipairs(rawNames) do
@@ -378,6 +366,8 @@ function frontend(layout)
                     if cIndex > #colors.background then
                         cIndex = 1
                     end
+                    monitor.setBackgroundColor(colors.background[cIndex])
+                    monitor.setTextColour(colors.text[cIndex])
                     for i,j in ipairs(v.columns) do
 
                         local text = j.text
@@ -389,12 +379,12 @@ function frontend(layout)
                         if not j.lasttext or j.lasttext ~= text or true then
 
                             --monitor.setCursorPos(j.xstart,y)
-                            monitor.setBackgroundColor(colors.background[cIndex])
+
                             --monitor.write(string.rep(" ",j.xend-j.xstart+1))
                             mprint(string.rep(" ",j.xend-j.xstart+1),j.xstart,j.xend,"left",v.align_h)
                             y = y-1
                             --monitor.setCursorPos(j.xstart,y)
-                            monitor.setTextColour(colors.text[cIndex])
+
                             mprint(text,j.xstart,j.xend,j.align, v.align_h)
                             y = y - 1
                             j.lasttext = text
@@ -424,7 +414,7 @@ function frontend(layout)
             monitor.clear()
         end
         render()
-        os.sleep(0.5)
+        os.sleep(0.25)
     end
 end
 
