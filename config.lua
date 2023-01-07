@@ -4,7 +4,7 @@ return {
   ["Owner"]="", --The name of the shop owner
   ["Wallet-Key"]="", --Your wallet privateKey
   ["Wallet-id"]="", --Your wallet address
-  ["Wallet-vanity"]="", -- Your wallet's .kst address. Leave empty if none
+  ["Wallet-vanity"]="", -- Your wallet's .kst address | PUT IT WITHOUT THE .KST | Leave empty if none
   ["Accept-wallet-id"]=true, -- whether the shop should accept wallet IDs too.
   ["Redstone_Output"]="top", --The redstone output
   ["Self-Id"]="turtle_", --The turtle id of your network
@@ -23,5 +23,5 @@ return {
     },
   },
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.5" --the kristed version, do not change unless you know what you are doing
+  ["Version"]="0.2.6" --the kristed version, do not change unless you know what you are doing
 }

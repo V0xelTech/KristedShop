@@ -73,7 +73,8 @@ local function backend()
             dta = textutils.unserialiseJSON(dta)
             if dta.type == "event" and dta.event == "transaction" then
                 local trans = dta.transaction
-                if (trans.to == config["Wallet-id"]) and (trans.sent_name == nil or config["Wallet-vanity"] ~= "" or trans.sent_name == config["Wallet-vanity"] and config["Accept-wallet-id"]) then
+                print(trans.sent_name)
+                if (trans.to == config["Wallet-id"]) and (trans.sent_name == nil and config["Accept-wallet-id"] or config["Wallet-vanity"] == "" and config["Accept-wallet-id"] or trans.sent_name == config["Wallet-vanity"]) then
                     local monitor = peripheral.find("monitor")
                     if trans.metadata ~= nil or trans.sent_name ~= nil then
                         local meta = {}
