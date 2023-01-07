@@ -62,7 +62,7 @@ function dropItem(id, limit)
     end
 end
 
-function backend()
+local function backend()
     local socket = kristapi.websocket()
     _G.KristedSocket = socket
     socket.send('{"type":"subscribe","event":"transactions","id":1}')
@@ -73,9 +73,21 @@ function backend()
             dta = textutils.unserialiseJSON(dta)
             if dta.type == "event" and dta.event == "transaction" then
                 local trans = dta.transaction
-                if trans.to == config["Wallet-id"] then
-                    if trans.metadata ~= nil then
-                        local meta = kristapi.parseMeta(trans.metadata)
+                if (trans.to == config["Wallet-id"]) and (trans.sent_name == nil or config["Wallet-vanity"] ~= "" or trans.sent_name == config["Wallet-vanity"] and config["Accept-wallet-id"]) then
+                    local monitor = peripheral.find("monitor")
+                    if trans.metadata ~= nil or trans.sent_name ~= nil then
+                        local meta = {}
+                        if trans.sent_name == nil then
+                            meta = kristapi.parseMeta(trans.metadata)
+                        else
+                            if trans.metadata ~= nil then
+                                meta = kristapi.parseMeta(trans.metadata)
+                            end
+                            print(trans.sent_metaname)
+                            if not meta.itemname then
+                                meta.itemname = trans.sent_metaname
+                            end
+                        end
                         if meta["return"] ~= nil then
                             print(trans.from, trans.to, trans.value, meta["return"])
                             if meta.itemname ~= nil and meta.itemname ~= "" then

@@ -4,6 +4,8 @@ return {
   ["Owner"]="", --The name of the shop owner
   ["Wallet-Key"]="", --Your wallet privateKey
   ["Wallet-id"]="", --Your wallet address
+  ["Wallet-vanity"]="", -- Your wallet's .kst address. Leave empty if none
+  ["Accept-wallet-id"]=true, -- whether the shop should accept wallet IDs too.
   ["Redstone_Output"]="top", --The redstone output
   ["Self-Id"]="turtle_", --The turtle id of your network
   ["Discord-Webhook"]=false, --Enable if you want discord webhook
@@ -21,5 +23,5 @@ return {
     },
   },
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.4" --the kristed version (if your shop buggy then just edit this and the shop will automatically reinstall itself)
+  ["Version"]="0.2.5" --the kristed version, do not change unless you know what you are doing
 }
