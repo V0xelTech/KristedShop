@@ -11,7 +11,7 @@ local function stockLookup(id)
         itemCache[id].time = os.time()-10
     end
    -- print("KIBASZOTT? "..os.time() - itemCache[id].time)
-    if os.time() - itemCache[id].time > 5 then
+    if os.time() - itemCache[id].time > 0.05 then
 
         local count = 0
         local rawNames = peripheral.getNames()
