@@ -89,8 +89,9 @@ local function backend()
                                 meta.itemname = trans.sent_metaname
                             end
                         end
-                        if meta["return"] ~= nil then
-                            print(trans.from, trans.to, trans.value, meta["return"])
+
+                        if meta["return"] ~= nil or true then
+                            print(trans.from, trans.to, trans.value, meta["return"] or "no one")
                             if meta.itemname ~= nil and meta.itemname ~= "" then
                                 local tc = false
                                 local vav = nil
