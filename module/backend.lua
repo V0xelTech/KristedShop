@@ -63,16 +63,21 @@ function dropItem(id, limit)
 end
 
 local function backend()
+
     local socket = kristapi.websocket()
     _G.KristedSocket = socket
     socket.send('{"type":"subscribe","event":"transactions","id":1}')
     while true do
-        if socket.isClosed() then
+        ::cont::
+        local ok, dta = socket.receive()
+
+        if not ok then
             socket = kristapi.websocket()
             _G.KristedSocket = socket
             socket.send('{"type":"subscribe","event":"transactions","id":1}')
+            goto cont
         end
-        local dta = socket.receive()
+
         --dta = json.decode(dta)
         if dta ~= nil then
             dta = textutils.unserialiseJSON(dta)
