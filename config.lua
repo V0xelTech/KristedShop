@@ -23,5 +23,5 @@ return {
     },
   },
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.8" --the kristed version, do not change unless you know what you are doing
+  ["Version"]="0.2.9" --the kristed version, do not change unless you know what you are doing
 }
