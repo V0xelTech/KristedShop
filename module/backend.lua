@@ -67,6 +67,11 @@ local function backend()
     _G.KristedSocket = socket
     socket.send('{"type":"subscribe","event":"transactions","id":1}')
     while true do
+        if socket.isClosed() then
+            socket = kristapi.websocket()
+            _G.KristedSocket = socket
+            socket.send('{"type":"subscribe","event":"transactions","id":1}')
+        end
         local dta = socket.receive()
         --dta = json.decode(dta)
         if dta ~= nil then
@@ -108,27 +113,47 @@ local function backend()
                                         if exchange >= 0 then
                                             preDropItem(vav.Id, stockLookup(vav.Id))
                                             if exchange ~= 0 then
-                                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
+                                                if meta["return"] ~= nil then
+                                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
+                                                else
+                                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, "message=Here is your change")
+                                                end
                                             end
                                         else
                                             preDropItem(vav.Id, count)
                                         end
                                         local change = ((trans.value / vav.Price)-count)*vav.Price
                                         if change >= 1 then
-                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
+                                            if meta["return"] ~= nil then
+                                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, meta["return"]..";message=Here is your change")
+                                            else
+                                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, change, "message=Here is your change")
+                                            end
                                         end
                                         if config["Discord-Webhook"] then
                                             dw.sendEmbed(config["Discord-Webhook-URL"], "Kristed", "Someone bought something", 0x0099ff,
                                                     {{["name"]="From address",["value"]=trans.from},{["name"]="Value",["value"]=trans.value},{["name"]="Return address",["value"]=meta["return"]},{["name"]="Itemname",["value"]=meta.itemname},{["name"]="Meta",["value"]="`"..trans.metadata.."`"},{["name"]="Items dropped",["value"]=tostring(count)},{["name"]="Exchange",["value"]=tostring(exchange)},{["name"]="Change",["value"]=tostring(change)}})
                                         end
                                     else
-                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
+                                        if meta["return"] ~= nil then
+                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We are out of stock from: "..meta.itemname)
+                                        else
+                                            kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=We are out of stock from: "..meta.itemname)
+                                        end
                                     end
                                 else
-                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We can't give you: "..meta.itemname)
+                                    if meta["return"] ~= nil then
+                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=We can't give you: "..meta.itemname)
+                                    else
+                                        kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=We can't give you: "..meta.itemname)
+                                    end
                                 end
                             else
-                                kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=Please specify an itemname")
+                                if meta["return"] ~= nil then
+                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message=Please specify an itemname")
+                                else
+                                    kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Please specify an itemname")
+                                end
                             end
                         else
                             kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, "message=Please send the krist from switchcraft, or specify return name")
