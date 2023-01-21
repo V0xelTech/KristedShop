@@ -67,16 +67,20 @@ local function backend()
     local socket = kristapi.websocket()
     _G.KristedSocket = socket
     socket.send('{"type":"subscribe","event":"transactions","id":1}')
-    while true do
-        ::cont::
-        local ok, dta = socket.receive()
+    function soc()
+        local ok, dta = pcall(socket.receive)
 
         if not ok then
             socket = kristapi.websocket()
             _G.KristedSocket = socket
             socket.send('{"type":"subscribe","event":"transactions","id":1}')
-            goto cont
+            return soc
         end
+        return dta
+    end
+    while true do
+        --::cont::
+        local dta = soc()
 
         --dta = json.decode(dta)
         if dta ~= nil then
