@@ -17,7 +17,7 @@ return {
   ["Items"]={ --The items to sell
     {
       ["Name"]="Example", --Some friendly name
-      ["Id"]="minecraft:wheat", --The name of the item
+      ["Id"]="minecraft:wheat?name=kaka", --The name of the item with optional filter
       ["Price"]=1, --The price / item
       ["Normal_Stock"]=10, -- Not needed if dynamic pricing is off, if it is on, this determines the defaul stock of the item.
                            -- If the stock is higher than the default stock, the price will be lowered. If the stock is lower than the default stock, the price will be raised.

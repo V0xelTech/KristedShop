@@ -6,14 +6,29 @@ local logger = glogger.getLogger("frontend")
 local itemCache = {}
 
 -- the same as above but uses the itemcache variable. Stores the item data in the item cache and a timestamp. If it is older than 5 seconds then it updates it.
-local function stockLookup(id)
-    if itemCache[id] == nil then
-        itemCache[id] = {}
-        itemCache[id].count = 0
-        itemCache[id].time = os.time()-10
+local function checkFilter(item, filters)
+    local o = true
+    for k,v in pairs(filters) do
+        --logger.log(3, "No filter found named: "..k.." (a nil value)")
+        local b = v.callback(item, v)
+        if b.inverted then
+            b = not b
+        end
+        if b == false then
+            o = false
+        end
+    end
+    return o
+end
+
+local function stockLookup(rid, id, filter)
+    if itemCache[rid] == nil then
+        itemCache[rid] = {}
+        itemCache[rid].count = 0
+        itemCache[rid].time = os.time()-10
     end
    -- print("KIBASZOTT? "..os.time() - itemCache[id].time)
-    if os.time() - itemCache[id].time > 0.05 then
+    if os.time() - itemCache[rid].time > 0.05 then
 
         local count = 0
         local rawNames = peripheral.getNames()
@@ -21,16 +36,16 @@ local function stockLookup(id)
             if string.match(v, "chest") == "chest" then
                 local chest = peripheral.wrap(v)
                 for kk,vv in pairs(chest.list()) do
-                    if vv.name == id then
+                    if vv.name == id and checkFilter(chest.getItemDetail(kk),filter) then
                         count = count + vv.count
                     end
                 end
             end
         end
-        itemCache[id].count = count
-        itemCache[id].time = os.time()
+        itemCache[rid].count = count
+        itemCache[rid].time = os.time()
     end
-    return itemCache[id].count
+    return itemCache[rid].count
 end
 
 function mysplit (inputstr, sep)
@@ -382,7 +397,7 @@ function frontend(layout)
                         local text = j.text
                         text = string.gsub(text, "{name}", vv.Name)
                         text = string.gsub(text, "{price}", vv.Price)
-                        text = string.gsub(text, "{stock}", stockLookup(vv.Id))
+                        text = string.gsub(text, "{stock}", stockLookup(vv.rawId,vv.Id,vv.filters))
                         text = string.gsub(text, "{alias}", vv.Alias or "")
 
                         if not j.lasttext or j.lasttext ~= text or true then
