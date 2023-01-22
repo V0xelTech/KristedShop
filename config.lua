@@ -21,6 +21,7 @@ return {
       ["Price"]=1, --The price / item
       ["Normal_Stock"]=10, -- Not needed if dynamic pricing is off, if it is on, this determines the defaul stock of the item.
                            -- If the stock is higher than the default stock, the price will be lowered. If the stock is lower than the default stock, the price will be raised.
+      ["Force-Default-Price"]=false, -- Not needed if dynamic pricing is off, if it is on, this determines whether it should not change the price of this item.
       ["Alias"]="empl" -- The item's price alias
     },
   },
