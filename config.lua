@@ -27,5 +27,5 @@ return {
   },
   ["Enable-Dynamic-Pricing"]=false, --dynamic price
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.11" --the kristed version, do not change unless you know what you are doing
+  ["Version"]="0.3.0" --the kristed version, do not change unless you know what you are doing
 }

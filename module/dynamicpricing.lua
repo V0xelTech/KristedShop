@@ -46,11 +46,8 @@ function dynamicpricing()
                 end
 
                 if stock > 0 then
-
-                    local newPrice = defaultPrices[v.Id] * (stock / v.Normal_Stock)
-                    if newPrice > defaultPrices[v.Id] then
-                        newPrice = defaultPrices[v.Id]
-                    end
+                    --price goes higher if there is lower stock, and price lowers if there is more stock
+                    local newPrice = math.floor((defaultPrices[v.Id] * (v.Normal_Stock / stock))*100)/100
                     if newPrice < 0 then
                         newPrice = 0
                     end
