@@ -11,7 +11,7 @@ local function checkFilter(item, filters)
     for k,v in pairs(filters) do
         --logger.log(3, "No filter found named: "..k.." (a nil value)")
         local b = v.callback(item, v)
-        if b.inverted then
+        if v.inverted then
             b = not b
         end
         if b == false then
