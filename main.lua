@@ -151,7 +151,47 @@ end
 
 local logger = getLogger("main")
 logger.autoFile(0)
-logger.log(0, "test")
+
+-- item ids may contain filters. This is one without a filter: minecraft:cobblestone
+-- This is one with a filter: minecraft:stone?name=something
+-- there may be multiple filters too: minecraft:stone?name=something&variant=smooth
+
+config.filters = {
+    ["name"]=function(item, value)
+        return item.displayName == value
+    end,
+    ["nbtHash"]=function(item,value)
+        return item.nbt == value
+    end
+}
+
+
+for k,v in ipairs(config["Items"]) do
+    local spat = mysplit(v.Id, "?")
+    local rawid = v.Id
+    local id = spat[1]
+    local q = spat[2] or ""
+    v.Id = spat[1]
+    v.rawId = rawid
+
+    local filters = {}
+    for k,v in ipairs(mysplit(q, "&")) do
+        -- example of inverted: !name=something
+        local invert = string.sub(v, 1, 1) == "!"
+        local f = mysplit(v, "=")
+        -- cut off the !
+        if invert then
+            f[1] = string.sub(f[1], 2)
+        end
+        if #f == 2 then
+            filters[f[1]] = {
+                callback=config.filters[f[1]] or function() logger.log(3, "Filter "..f[1].." doesn't exist!");return true end,
+                inverted=invert,
+            }
+        end
+    end
+    v.filters = filters
+end
 
 _G.kristedData = {
     dw = dw,
