@@ -163,11 +163,11 @@ local function backend()
                                     end
                                 end
                                 if tc then
-                                    if stockLookup(vav.Id) > 0 then
+                                    if stockLookup(vav.Id,vav.filters) > 0 then
                                         local count = math.floor(trans.value / vav.Price)
-                                        local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
+                                        local exchange = math.floor(trans.value - (stockLookup(vav.Id,vav.filters)*vav.Price))
                                         if exchange >= 0 then
-                                            preDropItem(vav.Id, stockLookup(vav.Id))
+                                            preDropItem(vav.Id, vav.filters, stockLookup(vav.Id,vav.filters))
                                             if exchange ~= 0 then
                                                 if meta["return"] ~= nil then
                                                     kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
@@ -176,7 +176,7 @@ local function backend()
                                                 end
                                             end
                                         else
-                                            preDropItem(vav.Id, count)
+                                            preDropItem(vav.Id, vav.filters, count)
                                         end
                                         local change = ((trans.value / vav.Price)-count)*vav.Price
                                         if change >= 1 then
