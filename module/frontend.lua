@@ -1,4 +1,6 @@
-local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw
+local config, kristapi, dw, glogger = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw, _G.kristedData.logger
+
+local logger = glogger.getLogger("frontend")
 
 
 local itemCache = {}
@@ -426,6 +428,7 @@ function frontend(layout)
 end
 
 function showError(err)
+    logger.log(1, "Critical error: " .. err)
     local monitor = peripheral.find("monitor")
     monitor.setBackgroundColor(0x100)
     monitor.setTextColor(0x4000)

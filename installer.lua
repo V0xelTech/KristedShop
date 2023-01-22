@@ -36,6 +36,7 @@ shell.run("mkdir module")
 --shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/updater.lua module/updater.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/backend.lua module/backend.lua")
 shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/frontend.lua module/frontend.lua")
+shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/module/dynamicpricing.lua module/dynamicpricing.lua")
 
 print("Downloading frontend-modules")
 shell.run("rm frontend-modules/")

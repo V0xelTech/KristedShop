@@ -19,9 +19,12 @@ return {
       ["Name"]="Example", --Some friendly name
       ["Id"]="minecraft:wheat", --The name of the item
       ["Price"]=1, --The price / item
-      ["Alias"]="empl"
+      ["Normal_Stock"]=10, -- Not needed if dynamic pricing is off, if it is on, this determines the defaul stock of the item.
+                           -- If the stock is higher than the default stock, the price will be lowered. If the stock is lower than the default stock, the price will be raised.
+      ["Alias"]="empl" -- The item's price alias
     },
   },
+  ["Enable-Dynamic-Pricing"]=false, --dynamic price
   ["Enable-Automatic-Update"]=true, --Enable automatic updates
-  ["Version"]="0.2.10" --the kristed version, do not change unless you know what you are doing
+  ["Version"]="0.2.11" --the kristed version, do not change unless you know what you are doing
 }

@@ -1,4 +1,6 @@
-local config, kristapi, dw = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw
+local config, kristapi, dw, glogger = _G.kristedData.config, _G.kristedData.kristapi, _G.kristedData.dw, _G.kristedData.logger
+
+local logger = glogger.getLogger("backend")
 
 function mysplit (inputstr, sep)
     if sep == nil then
@@ -87,7 +89,7 @@ local function backend()
             dta = textutils.unserialiseJSON(dta)
             if dta.type == "event" and dta.event == "transaction" then
                 local trans = dta.transaction
-                print(trans.sent_name)
+                --print(trans.sent_name)
                 if (trans.to == config["Wallet-id"]) and (trans.sent_name == nil and config["Accept-wallet-id"] or config["Wallet-vanity"] == "" and config["Accept-wallet-id"] or trans.sent_name == config["Wallet-vanity"]) then
                     local monitor = peripheral.find("monitor")
                     if trans.metadata ~= nil or trans.sent_name ~= nil then
@@ -98,14 +100,15 @@ local function backend()
                             if trans.metadata ~= nil then
                                 meta = kristapi.parseMeta(trans.metadata)
                             end
-                            print(trans.sent_metaname)
+                            --print(trans.sent_metaname)
                             if not meta.itemname then
                                 meta.itemname = trans.sent_metaname
                             end
                         end
 
                         if meta["return"] ~= nil or true then
-                            print(trans.from, trans.to, trans.value, meta["return"] or "no one")
+                            --print(trans.from, trans.to, trans.value, meta["return"] or "no one")
+                            logger.log(1,"Payment received, from "..trans.from.." to "..trans.to..", value: "..trans.value..", return: "..meta["return"] or "no one")
                             if meta.itemname ~= nil and meta.itemname ~= "" then
                                 local tc = false
                                 local vav = nil
