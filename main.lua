@@ -113,19 +113,27 @@ function getLogger(name)
         end
 
         term.write("["..os.date("%H:%M:%S").."] ")
-
+        local levele = ""
         if level == 0 then
             term.setTextColor(colors.cyan)
             term.write("[DEBUG] ")
+            levele = "DEBUG"
+
         elseif level == 1 then
             term.setTextColor(colors.green)
             term.write("[INFO] ")
+            levele = "INFO"
+
         elseif level == 2 then
             term.setTextColor(colors.yellow)
             term.write("[WARN] ")
+            levele = "WARN"
+
         elseif level == 3 then
             term.setTextColor(colors.red)
             term.write("[ERROR] ")
+            levele = "ERROR"
+
         end
 
         term.setTextColor(colors.green)
@@ -134,7 +142,7 @@ function getLogger(name)
         print(data)
 
         if level >= ret.logLevel then
-            ret.writeIntoRootFile("["..os.date("%H:%M:%S").."] ["..ret.getFullLogPrefix().."] > "..data)
+            ret.writeIntoRootFile("["..os.date("%H:%M:%S").."] ["..levele.."] ["..ret.getFullLogPrefix().."] > "..data)
         end
 
     end
