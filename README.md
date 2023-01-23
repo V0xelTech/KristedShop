@@ -1,4 +1,7 @@
 # KristedShop
+> A shop system aimed to be simple to use, easy to configure, and include lots of features.
+
+> PLEASE NOTE: This is a work in progress, you WILL experience bugs. Please report them to the issue tracker.
 
 ## How to install?
 1. paste this into a cc turtle: `wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua`
@@ -8,5 +11,5 @@
 5. make a copy of the config if something goes wrong you can load it back `cp config.lua conf.lua`
 6. reboot the turtle
 
-## How does the config works?
-Go to the config.lua and everything commented
+## How does the config work?
+In config.lua, everything is commented, so you can read what everything does.
