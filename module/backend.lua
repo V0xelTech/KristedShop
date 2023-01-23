@@ -120,8 +120,8 @@ local function backend()
                                 end
                                 if tc then
                                     if stockLookup(vav.Id) > 0 then
-                                        local count = math.floor(trans.value / vav.Price)
-                                        local exchange = math.floor(trans.value - (stockLookup(vav.Id)*vav.Price))
+                                        local count = math.floor((trans.value / vav.Price)*config["Decimal-Digits"] ^ 10) / (config["Decimal-Digits"] ^ 10)
+                                        local exchange = math.floor((trans.value - (stockLookup(vav.Id)*vav.Price)) * config["Decimal-Digits"] ^ 10) / (config["Decimal-Digits"] ^ 10)
                                         if exchange >= 0 then
                                             preDropItem(vav.Id, stockLookup(vav.Id))
                                             if exchange ~= 0 then

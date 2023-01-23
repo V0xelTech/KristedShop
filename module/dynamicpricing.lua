@@ -47,7 +47,7 @@ function dynamicpricing()
 
                 if stock > 0 then
                     --price goes higher if there is lower stock, and price lowers if there is more stock
-                    local newPrice = math.floor((defaultPrices[v.Id] * (v.Normal_Stock / stock))*100)/100
+                    local newPrice = math.floor((defaultPrices[v.Id] * (v.Normal_Stock / stock))*(config["Decimal-Digits"] ^ 10))/config["Decimal-Digits"] ^ 10
                     if newPrice < 0 then
                         newPrice = 0
                     end
