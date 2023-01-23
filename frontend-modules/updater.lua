@@ -51,6 +51,11 @@ function updater(layout)
             end
             os.sleep(60)
         end
+    else
+        logger.log(2, "Auto updater is disabled, not running!")
+        while true do
+            os.sleep(0)
+        end
     end
 end
 
