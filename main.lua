@@ -166,7 +166,8 @@ logger.autoFile(0)
 
 config.filters = {
     ["name"]=function(item, value)
-        return item.displayName == value
+        --logger.log(0, item.displayName.." and the value is: "..value)
+        return (item.displayName == value)
     end,
     ["nbtHash"]=function(item,value)
         return item.nbt == value
@@ -192,10 +193,17 @@ for k,v in ipairs(config["Items"]) do
             f[1] = string.sub(f[1], 2)
         end
         if #f == 2 then
-            filters[f[1]] = {
-                callback=config.filters[f[1]] or function() logger.log(3, "Filter "..f[1].." doesn't exist!");return true end,
-                inverted=invert,
-            }
+            if config.filters[f[1]] ~= nil then
+                filters[f[1]] = {
+                    callback=function(item, ...) return config.filters[f[1]](item, f[2], ...) end,
+                    inverted=invert,
+                }
+            else
+                filters[f[1]] = {
+                    callback=function() logger.log(3, "Filter "..f[1].." doesn't exist!");return true end,
+                    inverted=invert,
+                }
+            end
         end
     end
     v.filters = filters

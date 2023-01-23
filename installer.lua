@@ -13,7 +13,11 @@ print(text)
 print("Installer")
 print("By. VectorTech team (Bagi_Adam, BomberPlayz_)")
 
-local branch = "main"
+local branch = "dev"
+local sat,occ = pcall(require, "config")
+if sat then
+    branch = occ.branch
+end
 
 print("Installing version: "..http.get("https://raw.githubusercontent.com/afonya2/KristedShop/"..branch.."/version.txt").readAll())
 
