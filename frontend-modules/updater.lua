@@ -9,7 +9,7 @@ function updater(layout)
         while true do
             local nver = http.get("https://raw.githubusercontent.com/afonya2/KristedShop/main/version.txt").readAll()
             if config.Version ~= nver then
-                logger.info("New version found: "..nver)
+                logger.log(1,"New version found: "..nver)
                 local monitor = peripheral.find("monitor")
                 local w,h = monitor.getSize()
                 local decoder = dfpwm.make_decoder()
