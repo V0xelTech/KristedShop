@@ -117,6 +117,7 @@ local function backend()
         local ok, dta = pcall(socket.receive)
 
         if not ok then
+            logger.log(2, "Socket error: "..dta)
             socket = kristapi.websocket()
             _G.KristedSocket = socket
             socket.send('{"type":"subscribe","event":"transactions","id":1}')
