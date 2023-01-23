@@ -43,7 +43,7 @@ function updater(layout)
                 fi.write('monitor.write("The shop is currently updating...")\n')
 
                 fi.write('shell.run("rm installer.lua")\n')
-                fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/'..branch..'/installer.lua")\n')
+                fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/'..config.branch..'/installer.lua")\n')
                 fi.write('shell.run("installer autostart")')
                 fi.close()
                 logger.log("Updater updated, restarting so the updated updater can update the shop system")
