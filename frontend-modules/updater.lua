@@ -46,7 +46,7 @@ function updater(layout)
                 fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/'..config.branch..'/installer.lua")\n')
                 fi.write('shell.run("installer autostart")')
                 fi.close()
-                logger.log("Updater updated, restarting so the updated updater can update the shop system")
+                logger.log(1,"Updater updated, restarting so the updated updater can update the shop system")
                 shell.run("reboot")
             end
             os.sleep(60)
