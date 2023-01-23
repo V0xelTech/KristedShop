@@ -194,15 +194,15 @@ for k,v in ipairs(config["Items"]) do
         end
         if #f == 2 then
             if config.filters[f[1]] ~= nil then
-                filters[f[1]] = {
+                table.insert(filters, {
                     callback=function(item, ...) return config.filters[f[1]](item, f[2], ...) end,
                     inverted=invert,
-                }
+                })
             else
-                filters[f[1]] = {
+                table.insert(filters, {
                     callback=function() logger.log(3, "Filter "..f[1].." doesn't exist!");return true end,
                     inverted=invert,
-                }
+                })
             end
         end
     end
