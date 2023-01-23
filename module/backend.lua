@@ -31,6 +31,8 @@ local function checkFilter(item, filters)
     return o
 end
 
+local itemCache = {}
+
 local function stockLookup(rid, id, filter)
     if itemCache[rid] == nil then
         itemCache[rid] = {}
