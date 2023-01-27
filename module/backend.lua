@@ -228,6 +228,7 @@ function backend()
             if mindTransaction(trans) then
                 local oka, moszonnyu = allowProcessPurchase(trans)
                 if oka then
+                    local meta = kristapi.parseMeta(transaction.metadata)
                     logger.log(1,"Payment received, from "..trans.from.." to "..trans.to..", value: "..trans.value..", return: "..meta["return"] or "no one")
                     local tc = false
                     local vav = nil
