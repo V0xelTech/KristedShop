@@ -141,7 +141,11 @@ local function backend()
 
         --dta = json.decode(dta)
         if dta ~= nil then
-            dta = textutils.unserialiseJSON(dta)
+            ok, dta = pcall(textutils.unserialiseJSON, dta)
+            if not ok then
+                logger.log(3, "JSON error: "..dta)
+                return
+            end
             if dta.type == "event" and dta.event == "transaction" then
                 local trans = dta.transaction
                 --print(trans.sent_name)
