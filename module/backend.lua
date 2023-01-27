@@ -137,7 +137,7 @@ function allowProcessPurchase(transaction)
     if stockLookup(item.rawId,item.Id,item.filters) == 0 then
         return false, "out of stock of item"
     end
-    if trans.metadata ~= nil or trans.sent_name ~= nil then
+    if transaction.metadata ~= nil or transaction.sent_name ~= nil then
     else
         return false, "no meta"
     end
