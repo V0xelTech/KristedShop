@@ -113,19 +113,27 @@ function getLogger(name)
         end
 
         term.write("["..os.date("%H:%M:%S").."] ")
-
+        local levele = ""
         if level == 0 then
             term.setTextColor(colors.cyan)
             term.write("[DEBUG] ")
+            levele = "DEBUG"
+
         elseif level == 1 then
             term.setTextColor(colors.green)
             term.write("[INFO] ")
+            levele = "INFO"
+
         elseif level == 2 then
             term.setTextColor(colors.yellow)
             term.write("[WARN] ")
+            levele = "WARN"
+
         elseif level == 3 then
             term.setTextColor(colors.red)
             term.write("[ERROR] ")
+            levele = "ERROR"
+
         end
 
         term.setTextColor(colors.green)
@@ -134,7 +142,7 @@ function getLogger(name)
         print(data)
 
         if level >= ret.logLevel then
-            ret.writeIntoRootFile("["..os.date("%H:%M:%S").."] ["..ret.getFullLogPrefix().."] > "..data)
+            ret.writeIntoRootFile("["..os.date("%H:%M:%S").."] ["..levele.."] ["..ret.getFullLogPrefix().."] > "..data)
         end
 
     end
@@ -151,7 +159,55 @@ end
 
 local logger = getLogger("main")
 logger.autoFile(0)
-logger.log(0, "test")
+
+-- item ids may contain filters. This is one without a filter: minecraft:cobblestone
+-- This is one with a filter: minecraft:stone?name=something
+-- there may be multiple filters too: minecraft:stone?name=something&variant=smooth
+
+config.filters = {
+    ["name"]=function(item, value)
+        --logger.log(0, item.displayName.." and the value is: "..value)
+        return (item.displayName == value)
+    end,
+    ["nbtHash"]=function(item,value)
+        return item.nbt == value
+    end
+}
+
+
+for k,v in ipairs(config["Items"]) do
+    local spat = mysplit(v.Id, "?")
+    local rawid = v.Id
+    local id = spat[1]
+    local q = spat[2] or ""
+    v.Id = spat[1]
+    v.rawId = rawid
+
+    local filters = {}
+    for k,v in ipairs(mysplit(q, "&")) do
+        -- example of inverted: !name=something
+        local invert = string.sub(v, 1, 1) == "!"
+        local f = mysplit(v, "=")
+        -- cut off the !
+        if invert then
+            f[1] = string.sub(f[1], 2)
+        end
+        if #f == 2 then
+            if config.filters[f[1]] ~= nil then
+                table.insert(filters, {
+                    callback=function(item, ...) return config.filters[f[1]](item, f[2], ...) end,
+                    inverted=invert,
+                })
+            else
+                table.insert(filters, {
+                    callback=function() logger.log(3, "Filter "..f[1].." doesn't exist!");return true end,
+                    inverted=invert,
+                })
+            end
+        end
+    end
+    v.filters = filters
+end
 
 _G.kristedData = {
     dw = dw,

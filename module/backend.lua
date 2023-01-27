@@ -13,7 +13,61 @@ function mysplit (inputstr, sep)
     return t
 end
 
-local function stockLookup(id)
+local function checkFilter(item, filters)
+    --logger.log(0,"Checking item: "..textutils.serialise(item))
+    local o = true
+    for k,v in pairs(filters) do
+        --logger.log(3, "No filter found named: "..k.." (a nil value)")
+        --logger.log(0,"filter: "..k)
+        local b = v.callback(item)
+        --logger.log(0,"filtra: "..tostring(b))
+        if v.inverted then
+            b = not b
+        end
+        if b == false then
+            o = false
+        end
+    end
+    return o
+end
+
+local itemCache = {}
+
+local function stockLookup(rid, id, filter)
+    if itemCache[rid] == nil then
+        itemCache[rid] = {}
+        itemCache[rid].count = 0
+        itemCache[rid].time = os.time()-10
+    end
+
+    --logger.log(0,"KIBASZOTT? "..(os.time() - itemCache[rid].time))
+    --logger.log(0,"RID: "..rid..", IC: "..textutils.serialise(itemCache[rid]))
+    if os.time() - itemCache[rid].time > 0.05 then
+        --logger.log(0,"CHECKING FOR: RID: "..rid)
+
+
+
+        local count = 0
+        local rawNames = peripheral.getNames()
+        for k,v in ipairs(rawNames) do
+            if string.match(v, "chest") == "chest" then
+                local chest = peripheral.wrap(v)
+                for kk,vv in pairs(chest.list()) do
+                    if vv.name == id and checkFilter(chest.getItemDetail(kk),filter) then
+                        --logger.log(0, "fos? "..filter, chest.getItemDetail(kk).displayName)
+                        count = count + vv.count
+                    end
+                end
+            end
+        end
+        --logger.log(0, "FOSTOS? RID: "..rid..", CO: "..count)
+        itemCache[rid].count = count
+        itemCache[rid].time = os.time()
+    end
+    return itemCache[rid].count
+end
+
+--[[local function stockLookup(id)
     local count = 0
     local rawNames = peripheral.getNames()
     for k,v in ipairs(rawNames) do
@@ -27,9 +81,9 @@ local function stockLookup(id)
         end
     end
     return count
-end
+end]]
 
-function preDropItem(id, count)
+function preDropItem(id, filters, count)
     local stacks = {}
     local ca = count/64
     local marad = count
@@ -42,19 +96,19 @@ function preDropItem(id, count)
     end
     for k,v in ipairs(stacks) do
         while v > 0 do
-            local dro = dropItem(id, v)
+            local dro = dropItem(id, filters, v)
             v = v - dro
         end
     end
 end
 
-function dropItem(id, limit)
+function dropItem(id, filters, limit)
     local rawNames = peripheral.getNames()
     for k,v in ipairs(rawNames) do
         if string.match(v, "chest") == "chest" then
             local chest = peripheral.wrap(v)
             for kk,vv in pairs(chest.list()) do
-                if vv.name == id then
+                if vv.name == id and checkFilter(chest.getItemDetail(kk), filters) then
                     local co = chest.pushItems(config["Self-Id"],kk,limit,1)
                     turtle.drop(limit)
                     return co
@@ -73,6 +127,7 @@ local function backend()
         local ok, dta = pcall(socket.receive)
 
         if not ok then
+            logger.log(2, "Socket error: "..dta)
             socket = kristapi.websocket()
             _G.KristedSocket = socket
             socket.send('{"type":"subscribe","event":"transactions","id":1}')
@@ -86,7 +141,11 @@ local function backend()
 
         --dta = json.decode(dta)
         if dta ~= nil then
-            dta = textutils.unserialiseJSON(dta)
+            ok, dta = pcall(textutils.unserialiseJSON, dta)
+            if not ok then
+                logger.log(3, "JSON error: "..dta)
+                return
+            end
             if dta.type == "event" and dta.event == "transaction" then
                 local trans = dta.transaction
                 --print(trans.sent_name)
@@ -119,11 +178,11 @@ local function backend()
                                     end
                                 end
                                 if tc then
-                                    if stockLookup(vav.Id) > 0 then
-                                        local count = math.floor((trans.value / vav.Price)*(10 ^ config["Decimal-Digits"])) / (10 ^ config["Decimal-Digits"])
-                                        local exchange = math.floor((trans.value - (stockLookup(vav.Id)*vav.Price)) * (10 ^ config["Decimal-Digits"])) / (10 ^ config["Decimal-Digits"])
+                                    if stockLookup(vav.rawId,vav.Id,vav.filters) > 0 then
+                                        local count = math.floor(trans.value / vav.Price)
+                                        local exchange = math.floor(trans.value - (stockLookup(vav.rawId,vav.Id,vav.filters)*vav.Price))
                                         if exchange >= 0 then
-                                            preDropItem(vav.Id, stockLookup(vav.Id))
+                                            preDropItem(vav.Id, vav.filters, stockLookup(vav.rawId,vav.Id,vav.filters))
                                             if exchange ~= 0 then
                                                 if meta["return"] ~= nil then
                                                     kristapi.makeTransaction(config["Wallet-Key"], trans.from, exchange, meta["return"]..";message=Here is your change")
@@ -132,7 +191,7 @@ local function backend()
                                                 end
                                             end
                                         else
-                                            preDropItem(vav.Id, count)
+                                            preDropItem(vav.Id, vav.filters, count)
                                         end
                                         local change = ((trans.value / vav.Price)-count)*vav.Price
                                         if change >= 1 then

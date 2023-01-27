@@ -7,7 +7,7 @@ local speaker = peripheral.find("speaker")
 function updater(layout)
     if config["Enable-Automatic-Update"] then
         while true do
-            local nver = http.get("https://raw.githubusercontent.com/afonya2/KristedShop/main/version.txt").readAll()
+            local nver = http.get("https://raw.githubusercontent.com/afonya2/KristedShop/"..config.branch.."/version.txt").readAll()
             if config.Version ~= nver then
                 logger.log(1,"New version found: "..nver)
                 local monitor = peripheral.find("monitor")
@@ -43,13 +43,18 @@ function updater(layout)
                 fi.write('monitor.write("The shop is currently updating...")\n')
 
                 fi.write('shell.run("rm installer.lua")\n')
-                fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/main/installer.lua")\n')
+                fi.write('shell.run("wget https://raw.githubusercontent.com/afonya2/KristedShop/'..config.branch..'/installer.lua")\n')
                 fi.write('shell.run("installer autostart")')
                 fi.close()
-                logger.log("Updater updated, restarting so the updated updater can update the shop system")
+                logger.log(1,"Updater updated, restarting so the updated updater can update the shop system")
                 shell.run("reboot")
             end
             os.sleep(60)
+        end
+    else
+        logger.log(2, "Auto updater is disabled, not running!")
+        while true do
+            os.sleep(0)
         end
     end
 end
