@@ -178,7 +178,7 @@ function dispenseItem(trans, meta)
             vav = v
         end
     end
-    local count = math.floor(trans.value / vav.Price)
+    local count = math.round(trans.value / vav.Price)
     local exchange = math.floor(trans.value - (stockLookup(vav.rawId,vav.Id,vav.filters)*vav.Price))
     if exchange >= 0 then
         preDropItem(vav.Id, vav.filters, stockLookup(vav.rawId,vav.Id,vav.filters))
