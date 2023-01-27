@@ -170,6 +170,14 @@ function initializeSocket()
 end
 
 function dispenseItem(trans, meta)
+    local tc = false
+    local vav = nil
+    for k,v in ipairs(config.Items) do
+        if v.Name == meta.itemname or v.Alias == meta.itemname then
+            tc = true
+            vav = v
+        end
+    end
     local count = math.floor(trans.value / vav.Price)
     local exchange = math.floor(trans.value - (stockLookup(vav.rawId,vav.Id,vav.filters)*vav.Price))
     if exchange >= 0 then
@@ -230,14 +238,6 @@ function backend()
                 if oka then
                     local meta = kristapi.parseMeta(trans.metadata)
                     logger.log(1,"Payment received, from "..trans.from.." to "..trans.to..", value: "..trans.value..", return: "..meta["return"] or "no one")
-                    local tc = false
-                    local vav = nil
-                    for k,v in ipairs(config.Items) do
-                        if v.Name == meta.itemname or v.Alias == meta.itemname then
-                            tc = true
-                            vav = v
-                        end
-                    end
 
                     local count, exchange, change = dispenseItem(trans, meta)
 
