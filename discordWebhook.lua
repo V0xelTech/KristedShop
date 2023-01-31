@@ -54,50 +54,63 @@ dw.sendBuilderEmbed = function()
     }
 
     local ret = {
-        ["setTitle"] = function(title)
-            da.embeds[1].title = title
-            return ret
-        end,
-        ["setDescription"] = function(desc)
-            da.embeds[1].description = desc
-            return ret
-        end,
-        ["setColor"] = function(color)
-            da.embeds[1].color = color
-            return ret
-        end,
-        ["addField"] = function()
-            local ret2 = ret
-            local field = {
-                ["name"] = "",
-                ["value"] = "",
-                ["inline"] = false
-            }
-            local ret = {
-                ["setName"] = function(name)
-                    field.name = name
-                    return ret
-                end,
-                ["setValue"] = function(value)
-                    field.value = value
-                    return ret
-                end,
-                ["setInline"] = function(inline)
-                    field.inline = inline
-                    return ret
-                end,
-                ["endField"] = function()
-                    table.insert(da.embeds[1].fields, field)
-                    return ret2
-                end
-            }
-            return ret
-        end,
-        ["send"] = function(link)
-            http.post(link, textutils.serialiseJSON(da), {["Content-Type"]="application/json"})
 
-        end
     }
+
+    ret["setTitle"] = function(title)
+        da.embeds[1].title = title
+        return ret
+    end
+
+    ret["setDescription"] = function(desc)
+        da.embeds[1].description = desc
+        return ret
+    end
+
+    ret["setColor"] = function(color)
+        da.embeds[1].color = color
+        return ret
+    end
+
+    ret["addField"] = function()
+        local ret2 = ret
+        local field = {
+            ["name"] = "",
+            ["value"] = "",
+            ["inline"] = false
+        }
+
+        local ret = {}
+
+        ret["setName"] = function(name)
+            field.name = name
+            return ret
+        end
+
+        ret["setValue"] = function(value)
+            field.value = value
+            return ret
+        end
+
+        ret["setInline"] = function(inline)
+            field.inline = inline
+            return ret
+        end
+
+        ret["endField"] = function()
+            table.insert(da.embeds[1].fields, field)
+            return ret2
+        end
+
+
+        return ret
+    end
+
+    ret["send"] = function(link)
+        http.post(link, textutils.serialiseJSON(da), {["Content-Type"]="application/json"})
+
+    end
+
 
     return ret
 end
