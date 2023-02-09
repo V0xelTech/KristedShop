@@ -222,6 +222,7 @@ function processWebhook(trans, meta, count, exchange, change, success)
                 .addField().setName("Items dropped").setValue(tostring(count)).setInline(true).endField()
                 .addField().setName("Exchange").setValue(tostring(exchange)).setInline(true).endField()
                 .addField().setName("Change").setValue(tostring(change)).setInline(true).endField()
+                .send(config["Discord-Webhook-URL"])
 
     end
 end
@@ -243,6 +244,9 @@ function backend()
 
                     processWebhook(trans, meta, count, exchange, change, true, "Successful purchase")
                 else
+
+                    local meta = kristapi.parseMeta(trans.metadata)
+
                     local embed = dw.sendBuilderEmbed()
 
                     embed
@@ -251,6 +255,7 @@ function backend()
                             .setColor(0xff0000)
                             .addField().setName("Failure reason").setValue(moszonnyu).setInline(true).endField()
                             .addField().setName("From").setValue(trans.from).setInline(true).endField()
+                            .send(config["Discord-Webhook-URL"])
 
                     if meta["return"] ~= nil then
                         kristapi.makeTransaction(config["Wallet-Key"], trans.from, trans.value, meta["return"]..";message="..moszonnyu)
