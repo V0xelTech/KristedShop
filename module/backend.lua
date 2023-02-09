@@ -122,6 +122,9 @@ end
 -- otherwise the reason
 function allowProcessPurchase(transaction)
     local meta = kristapi.parseMeta(transaction.metadata)
+    if meta["metaname"] then
+        meta["itemname"] = meta["metaname"]
+    end
     if meta["itemname"] == nil then
         return false, "no itemname"
     end
@@ -172,6 +175,7 @@ end
 function dispenseItem(trans, meta)
     local tc = false
     local vav = nil
+    print(meta.itemname)
     for k,v in ipairs(config.Items) do
         if v.Name == meta.itemname or v.Alias == meta.itemname then
             tc = true
@@ -238,6 +242,9 @@ function backend()
                 local oka, moszonnyu = allowProcessPurchase(trans)
                 if oka then
                     local meta = kristapi.parseMeta(trans.metadata)
+                    if meta["metaname"] then
+                        meta["itemname"] = meta["metaname"]
+                    end
                     logger.log(1,"Payment received, from "..trans.from.." to "..trans.to..", value: "..trans.value..", return: "..meta["return"] or "no one")
 
                     local count, exchange, change = dispenseItem(trans, meta)
@@ -246,7 +253,9 @@ function backend()
                 else
 
                     local meta = kristapi.parseMeta(trans.metadata)
-
+                    if meta["metaname"] then
+                        meta["itemname"] = meta["metaname"]
+                    end
                     local embed = dw.sendBuilderEmbed()
 
                     embed
@@ -255,6 +264,7 @@ function backend()
                             .setColor(0xff0000)
                             .addField().setName("Failure reason").setValue(moszonnyu).setInline(true).endField()
                             .addField().setName("From").setValue(trans.from).setInline(true).endField()
+                            .addField().setName("Meta").setValue(textutils.serialise(meta)).endField()
                             .send(config["Discord-Webhook-URL"])
 
                     if meta["return"] ~= nil then
