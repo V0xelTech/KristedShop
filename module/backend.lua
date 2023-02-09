@@ -222,7 +222,7 @@ function processWebhook(trans, meta, count, exchange, change, success)
                 .addField().setName("Value").setValue(trans.value).setInline(true).endField()
                 .addField().setName("Return address").setValue(meta["return"]).setInline(true).endField()
                 .addField().setName("Itemname").setValue(meta.itemname).setInline(true).endField()
-                .addField().setName("Meta").setValue("`"..trans.metadata.."`").setInline(true).endField()
+                --.addField().setName("Meta").setValue("`"..trans.metadata.."`").setInline(true).endField() -- Just a debug thing
                 .addField().setName("Items dropped").setValue(tostring(count)).setInline(true).endField()
                 .addField().setName("Exchange").setValue(tostring(exchange)).setInline(true).endField()
                 .addField().setName("Change").setValue(tostring(change)).setInline(true).endField()
